@@ -76,3 +76,14 @@ Since this is a custom HACS integration, adhere to the following best practices:
 - **Asynchronous Flow**: Leverage `async/await` for non-blocking I/O operations (e.g., BLE calls, network communication).
 - **DataUpdateCoordinator**: Always route sensor polls and updates through a central `DataUpdateCoordinator` to prevent multiple entities from hammering the Bluetooth radio simultaneously.
 - **Config Flow**: Implement `ConfigFlow` to enable automatic discovery or simple user setup via the HA Frontend.
+
+---
+
+## 🔒 Hardware Privacy & Git Safeguards
+
+To prevent leaking sensitive, device-specific information (such as Bluetooth MAC addresses, peripheral UUIDs, or device serial numbers) in the public repository, developers must strictly adhere to the following rules:
+
+1. **No Hardcoded Device Identifiers**: Never hardcode real MAC addresses, Bluetooth UUIDs, or serial numbers in any source code, test scripts, or examples. Always load them dynamically via the environment (e.g., using `os.getenv("ANKER_MAC_ADDRESS")`).
+2. **Environment Variables only**: All private configuration and device parameters must be stored in the Git-ignored `.env` file at the root.
+3. **No Device Logs in Commits**: Never commit actual device telemetry dumps or test output JSON logs (like `last_telemetry.json` or `investigation_results.json`). Verify that these are correctly ignored by `.gitignore` (`*results.json`, `*telemetry.json`).
+4. **Redact Documentation Examples**: In READMEs, guidelines, or design plans, always use redacted placeholder strings (e.g., `XX:XX:XX:XX:XX:XX` or `AZV25N0FXXXXXXXX`) when demonstrating outputs or configuration setups.

@@ -60,3 +60,8 @@ share/python-wheels/
 *.egg
 manifest
 spec
+
+# Test results and telemetry JSON dumps
+*results.json
+*telemetry.json
+
