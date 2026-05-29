@@ -50,6 +50,21 @@ git diff
 
 ### 4. Stage Intended Files
 Stage files selectively. Do NOT commit temporary directories, virtual environments, cache files, or environment variables (`.env`).
+
+#### 🔀 Atomic & Split Commits
+If your changes contain logically distinct or independent modifications (e.g., editing documentation in `README.md` and adding a new python feature in `custom_components/`, or introducing a bug fix alongside a large refactor), **do not commit them all in a single giant commit**.
+Instead, **split them into multiple atomic commits**:
+1. Group files by logical change boundaries (e.g. `docs` files, `test` files, `feat` or `fix` files).
+2. Stage only the files for the first distinct change:
+   ```bash
+   git add openspec/style-guide.md
+   ```
+3. Proceed to validation (Step 2) and commit (Step 5) only for the staged files.
+4. Repeat staging, validation, and committing for the remaining files:
+   ```bash
+   git add test-scripts/test_passive_telemetry.py
+   ```
+
 ```bash
 # Stage specific files
 git add path/to/file.py
@@ -59,7 +74,7 @@ git add tests/
 ```
 
 ### 5. Write a Conventional Commit Message
-Use the Conventional Commits specification to format your commit messages. The message should explain "why" the change was made rather than just "what".
+Use the Conventional Commits specification to format your commit messages. The message should explain "why" the change was made rather than just "what". Each split commit must have its own descriptive conventional message.
 
 #### Message Structure:
 ```text
