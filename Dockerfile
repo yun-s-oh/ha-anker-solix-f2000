@@ -4,6 +4,7 @@ FROM python:3.11-slim
 # Set environmental variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Set the working directory in the container
 WORKDIR /app
@@ -14,10 +15,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bluez \
     && rm -rf /var/lib/apt/lists/*
 
+# Set up virtual environment inside the container
+RUN python -m venv /opt/venv
+
 # Copy requirements file first to leverage Docker cache
 COPY test-scripts/requirements.txt /app/
 
-# Install python dependencies
+# Install python dependencies inside the virtual environment
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir pytest pytest-asyncio
 

@@ -11,8 +11,8 @@
 
 ## 3. Docker Test Environment
 
-- [x] 3.1 Create a generic `Dockerfile` and `docker-compose.yml` to package the testing suite and python dependencies
-- [ ] 3.2 Implement a mock BLE client parser module in Python to generate mock byte streams for automated testing
+- [x] 3.1 Create a `Dockerfile` (utilizing `venv`) and `docker-compose.yml` to package unit tests and local Home Assistant
+- [x] 3.2 Implement a mock BLE client parser module in Python to generate mock byte streams for automated testing
 - [ ] 3.3 Create a comprehensive `pytest` suite that feeds mock byte packets to the parser and asserts correct extraction of battery and power metrics
 
 ## 4. Core Home Assistant Integration

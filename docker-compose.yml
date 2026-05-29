@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  # Service 1: Unit & Mock telemetry test runner inside an isolated python venv container
   test-suite:
     build:
       context: .
@@ -11,5 +12,18 @@ services:
     environment:
       - ANKER_MAC_ADDRESS=XX:XX:XX:XX:XX:XX
       - ANKER_DEVICE_NAME=767_PowerHouse
-    # Keep container alive or run pytest by default
     command: pytest -v
+
+  # Service 2: Local Home Assistant stable environment for dynamic custom component integration testing
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./config:/config
+      - ./custom_components:/config/custom_components
+    environment:
+      - TZ=Australia/Sydney
+    ports:
+      - "8123:8123"
+    restart: unless-stopped
+    network_mode: bridge
