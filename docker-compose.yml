@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  test-suite:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: f2000-test-suite
+    volumes:
+      - ./test-scripts:/app/test-scripts
+    environment:
+      - ANKER_MAC_ADDRESS=XX:XX:XX:XX:XX:XX
+      - ANKER_DEVICE_NAME=767_PowerHouse
+    # Keep container alive or run pytest by default
+    command: pytest -v
