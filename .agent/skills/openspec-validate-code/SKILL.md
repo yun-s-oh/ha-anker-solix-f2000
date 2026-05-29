@@ -9,7 +9,10 @@ metadata:
   generatedBy: "1.3.1"
 ---
 
-Validate codebase quality, formatting, syntax, and type compliance before staging, committing, or proposing changes.
+Validate codebase quality, formatting, syntax, and type compliance.
+
+> [!IMPORTANT]
+> **Execution Timing Guideline**: To maintain maximum efficiency, do NOT run these validations each time code changes following the OpenSpec guideline. Instead, it should ideally run after code changes are completely finished, or as a final gate prior to staging/committing changes (`/opsx-commit`).
 
 **Input**: Optionally specify a target directory or file path. If omitted, you must dynamically locate and validate the custom component directory (e.g., `custom_components/anker_solix_f2000` or generic component folders).
 
@@ -87,6 +90,7 @@ Running: hass-config-check custom_components/
 ---
 
 ## Guardrails
+- **Timing & Frequency**: Do NOT run these validation checks each time code changes to follow the OpenSpec guideline. It should ideally run only after code changes are complete, or as a final verification before committing.
 - **Zero Errors Allowed**: Never skip or ignore linting or type-checking errors. If any step fails, fix the code or prompt the user with details before proceeding to commit or release.
 - **Strict Line Limits**: Keep modified and newly introduced code capped at 100 characters per line.
 - **No Swallowed Exceptions**: Ensure `try/except` blocks in component code do not swallow exceptions without proper logs (warn/error).

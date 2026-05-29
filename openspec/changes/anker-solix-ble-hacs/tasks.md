@@ -5,8 +5,8 @@
 
 ## 2. Standalone Command Line Test Scripts
 
-- [ ] 2.1 Set up a clean Python virtual environment structure, including a requirements file with `bleak` and `SolixBLE`
-- [ ] 2.2 Create `test_telemetry.py` standalone CLI script to scan for nearby Anker BLE devices, connect to a designated MAC address, and print formatted parsed telemetry
+- [x] 2.1 Set up a clean Python virtual environment structure, including a requirements file with `bleak` and `SolixBLE`
+- [x] 2.2 Create `test_telemetry.py` standalone CLI script to scan for nearby Anker BLE devices, connect to a designated MAC address, and print formatted parsed telemetry
 - [ ] 2.3 Create `test_heartbeat.py` standalone CLI script that maintains an active connection and issues keep-alive pings to verify timeout prevention
 
 ## 3. Docker Test Environment
