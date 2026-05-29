@@ -3,11 +3,18 @@ schema: spec-driven
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech Stack: Home Assistant Custom Component (HACS), BLE (bleak), Python 3.9+
+  Conventions: We follow conventional commits and the strict Python Code Style Guide defined in openspec/style-guide.md.
+  Key Code Style Rules:
+    - PEP 8 formatting (4 spaces, no tabs).
+    - Maximum line length is 100 characters.
+    - Type hints are required for all new functions and methods.
+    - Group imports: Standard library, Third-party, Home Assistant, Local.
+    - Triple double-quote docstrings (""") for all modules, classes, and complex functions explaining "why", not just "what".
+    - Robust error handling with appropriate HA logging levels.
+    - Use named constants defined in const.py (no magic numbers).
+    - CamelCase for Classes, UPPER_CASE for Constants, snake_case for variables/functions.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
@@ -18,3 +25,4 @@ schema: spec-driven
 #       - Always include a "Non-goals" section
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
+
