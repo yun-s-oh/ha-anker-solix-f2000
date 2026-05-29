@@ -1,7 +1,7 @@
 ## 1. Research and Documentation
 
-- [ ] 1.1 Document the known BLE services, characteristics, and custom packet hex layout for Anker Solix F2000 in `specs/ble-protocol/spec.md`
-- [ ] 1.2 Create `agent-guidelines.md` detailing the project structure, BLE protocol specifications, and coding patterns for developer/agent alignment
+- [x] 1.1 Document the known BLE services, characteristics, and custom packet hex layout for Anker Solix F2000 in `specs/ble-protocol/spec.md`
+- [x] 1.2 Create `agent-guidelines.md` detailing the project structure, BLE protocol specifications, and coding patterns for developer/agent alignment
 
 ## 2. Standalone Command Line Test Scripts
 
