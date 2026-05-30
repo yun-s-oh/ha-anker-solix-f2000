@@ -415,7 +415,8 @@ async def main() -> None:
 
         dev = found[0]
         save_env(dev.address, dev.name or "767_PowerHouse")
-        os.environ["ANKER_MAC_ADDRESS"] = dev.address
+        logger.info("✅ Scan complete and saved to .env. Run without --scan to stream telemetry.")
+        return
 
     mac_address = os.getenv("ANKER_MAC_ADDRESS")
     if not mac_address:

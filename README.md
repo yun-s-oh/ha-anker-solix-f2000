@@ -65,25 +65,33 @@ ANKER_DEVICE_NAME=767_PowerHouse
 
 ## 🔍 Running Verification Scripts
 
-### A. GATT Database Diagnostics
-Inspect the service GATT structure to confirm the device characteristics:
+### A. BLE Device Scanning & Auto-Configuration
+To scan for nearby Anker devices and automatically configure your local `.env` file, place your F2000 in active Bluetooth pairing mode (press the physical IoT/Bluetooth button on the front of the unit once so that the Bluetooth symbol begins blinking) and run:
+```bash
+test-scripts/venv/bin/python test-scripts/test_passive_telemetry.py --scan
+```
+> [!TIP]
+> Once a candidate is discovered, the script will register its BLE MAC address and name inside your `.env` file and exit cleanly. Subsequent commands (diagnostics, telemetry, and heartbeats) read from this file and run parameter-free!
+
+
+### B. GATT Database Diagnostics
+Inspect the service GATT structure to confirm the device characteristics (reads MAC from the configured `.env` file):
 ```bash
 test-scripts/venv/bin/python test-scripts/diagnose_gatt.py
 ```
 
-### B. BLE Device Scanning & Auto-Configuration
-To scan for nearby Anker devices and automatically configure your `.env` file on the first run:
+### C. Streaming Decoded Passive Telemetry
+Subscribe to telemetry notifications, parse the unencrypted 102-byte packets continuously, and print a formatted real-time dashboard:
 ```bash
-test-scripts/venv/bin/python test-scripts/test_telemetry.py --scan
+test-scripts/venv/bin/python test-scripts/test_passive_telemetry.py
 ```
-> [!TIP]
-> If a potential Anker Solix candidate is found, the script will automatically register its BLE MAC address and name inside your `.env` file, meaning subsequent commands run parameter-free!
 
-### C. Streaming Raw Telemetry & Register Discovery
-Subscribe to raw telemetry streams, print a beautiful visual byte matrix, and decode the power/battery registers:
+### D. Verifying Heartbeats & Connection Persistence
+Test active 5-minute heartbeats to verify connection persistence and BLE radio sleep prevention:
 ```bash
-test-scripts/venv/bin/python test-scripts/test_raw_telemetry.py
+test-scripts/venv/bin/python test-scripts/test_heartbeat.py
 ```
+
 
 ---
 
