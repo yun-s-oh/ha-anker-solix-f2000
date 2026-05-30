@@ -92,6 +92,31 @@ Test active 5-minute heartbeats to verify connection persistence and BLE radio s
 test-scripts/venv/bin/python test-scripts/test_heartbeat.py
 ```
 
+---
+
+## 🐳 Deploying Home Assistant with Docker
+
+This repository includes a pre-configured `docker-compose.yml` to package and run a local Home Assistant stable instance for dynamic custom component integration testing.
+
+### 1. Spin Up Local Home Assistant
+To spin up a local Home Assistant stable instance with our custom component dynamically mapped:
+```bash
+# Spin up Home Assistant in the background
+docker compose up -d homeassistant
+```
+*   **Web Portal**: Access your local Home Assistant UI at [http://localhost:8123](http://localhost:8123).
+*   **Active Scaffolding**: Any modifications made to `custom_components/anker_solix_f2000/` are instantly shared with the container and can be dynamically reloaded from the Home Assistant UI without rebuilding.
+
+### 🛜 Host Bluetooth & OS Compatibility Guidelines
+To ensure Home Assistant can discover and connect to your physical Anker F2000 unit over BLE inside Docker, note the following system requirements:
+
+*   **Linux Hosts**: 
+    *   The container uses **Host Networking** (`network_mode: host`) to directly bind to physical Bluetooth controllers.
+    *   It mounts the **System D-Bus Socket** (`/var/run/dbus:/var/run/dbus:ro`) to communicate with the host's `bluez` Bluetooth system daemon. Ensure `dbus` is active on your host.
+*   **macOS Hosts**: 
+    *   > [!WARNING]
+    *   > Docker on macOS runs inside a Linux virtual machine hypervisor. Because macOS does not support passing CoreBluetooth hardware controllers through to hypervisor guests, **Home Assistant running in Docker on macOS cannot access physical Bluetooth adapters**.
+    *   👉 **Action**: To test real BLE operations (scanning, streaming, heartbeats) or to run `pytest` unit tests on macOS, execute the local Python CLI verification scripts or `pytest` directly on your host machine inside the local virtual environment (`test-scripts/venv/`).
 
 ---
 

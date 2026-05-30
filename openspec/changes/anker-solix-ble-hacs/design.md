@@ -46,7 +46,8 @@ Instead of writing a raw `bleak` parser from scratch, this design favors buildin
 - **[Risk] Host Bluetooth Adapter Overload**: Home Assistant host running multiple BLE integrations may drop packets.
   - *Mitigation*: Use HA's native `BluetoothDataUpdateCoordinator` which integrates with the host's central BLE queuing mechanism rather than spawning independent unmanaged threads.
 - **[Risk] Hardware Isolation during Testing**: Developing and verifying BLE connections requires physical hardware.
-  - *Mitigation*: Develop a Dockerized mock environment (`docker-test-env`) that mocks the BLE client parser interface so developers and automated agents can verify the integration code statically and dynamically without a physical device.
+  - *Mitigation*: Develop a standalone mock F2000 environment (`test-scripts/mock_f2000.py`) and a comprehensive local `pytest` suite running within the host virtual environment (`test-scripts/venv`) to verify all telemetry and parser logic statically and dynamically without physical hardware.
+
 
 ---
 

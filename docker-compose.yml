@@ -1,20 +1,7 @@
 version: "3.8"
 
 services:
-  # Service 1: Unit & Mock telemetry test runner inside an isolated python venv container
-  test-suite:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: f2000-test-suite
-    volumes:
-      - ./test-scripts:/app/test-scripts
-    environment:
-      - ANKER_MAC_ADDRESS=XX:XX:XX:XX:XX:XX
-      - ANKER_DEVICE_NAME=767_PowerHouse
-    command: pytest -v
-
-  # Service 2: Local Home Assistant stable environment for dynamic custom component integration testing
+  # Local Home Assistant stable environment for dynamic custom component integration testing
   homeassistant:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
@@ -26,4 +13,5 @@ services:
       - TZ=Australia/Sydney
     restart: unless-stopped
     network_mode: host
+
 
