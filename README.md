@@ -28,6 +28,26 @@ graph TD
 
 ---
 
+## ⏰ The Bluetooth Timeout Problem
+
+> [!WARNING]
+> The Anker Solix F2000 has a frustrating firmware behaviour: if no Bluetooth connection is active for **12 hours**, the device **silently disables its Bluetooth radio** to "save power." This forces you to physically walk over to the unit and press the Bluetooth button every single day to re-enable it.
+>
+> Yes — Anker decided to kill Bluetooth to save milliwatts on a device with a **2,048 Wh (2 kWh)** battery capacity.
+
+This integration solves the problem permanently:
+
+| Without Integration | With Integration |
+|---|---|
+| BLE radio shuts off after 12h of inactivity | **Always on** — 30-second active polling keeps the connection alive |
+| Must physically press the BT button daily | Fully automated, zero manual intervention |
+| No real-time telemetry in Home Assistant | Live battery, power, and temperature sensors |
+
+> [!TIP]
+> By issuing a telemetry query command every 30 seconds, the coordinator keeps the BLE radio awake indefinitely while simultaneously providing real-time sensor data to Home Assistant. The F2000 never enters Bluetooth sleep.
+
+---
+
 ## 🛠️ Getting Started & Virtual Environment Setup
 
 To run the verification scripts and test local telemetry safely, configure an isolated Python 3.11 virtual environment under `test-scripts/`.
