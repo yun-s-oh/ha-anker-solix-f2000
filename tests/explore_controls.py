@@ -187,7 +187,10 @@ class ExplorationConsole:
             print("5. DC Output OFF (Preset)")
             print("6. LED Light SOS (Preset)")
             print("7. LED Light OFF (Preset)")
-            print("8. Back to Main Menu")
+            print("8. LED Light LOW (Preset)")
+            print("9. LED Light MID (Preset)")
+            print("10. LED Light HIGH (Preset)")
+            print("11. Back to Main Menu")
             choice = input("Select preset: ").strip()
 
             if choice == "1":
@@ -219,6 +222,18 @@ class ExplorationConsole:
                 packet = build_f2000_control_packet(0x8B, 0x00)
                 await self.send_payload(packet)
             elif choice == "8":
+                # LED LOW preset (Cmd: 8B, Value: 01)
+                packet = build_f2000_control_packet(0x8B, 0x01)
+                await self.send_payload(packet)
+            elif choice == "9":
+                # LED MID preset (Cmd: 8B, Value: 02)
+                packet = build_f2000_control_packet(0x8B, 0x02)
+                await self.send_payload(packet)
+            elif choice == "10":
+                # LED HIGH preset (Cmd: 8B, Value: 03)
+                packet = build_f2000_control_packet(0x8B, 0x03)
+                await self.send_payload(packet)
+            elif choice == "11":
                 break
 
     async def test_encrypted_solixble(self) -> None:
