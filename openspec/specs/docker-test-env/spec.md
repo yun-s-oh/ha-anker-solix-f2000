@@ -1,7 +1,7 @@
 # docker-test-env Specification
 
 ## Purpose
-TBD - created by archiving change anker-solix-ble-hacs. Update Purpose after archive.
+This specification defines the requirement for the containerized Home Assistant development and testing environment, ensuring host-level Bluetooth hardware access for local BLE device discovery.
 ## Requirements
 ### Requirement: Containerized Home Assistant Environment with Host BLE Access
 The repository SHALL configure a stable containerized Home Assistant service equipped to natively access the host's Bluetooth adapter.

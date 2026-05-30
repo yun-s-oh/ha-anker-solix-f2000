@@ -1,7 +1,7 @@
 # failover-recovery Specification
 
 ## Purpose
-TBD - created by archiving change anker-solix-ble-hacs. Update Purpose after archive.
+This specification defines the Bluetooth failover, reconnection, startup retry, and keep-alive heartbeat requirements for maintaining reliable long-term F2000 connections.
 ## Requirements
 ### Requirement: Active BLE Heartbeat Keep-Alive
 The system SHALL issue a telemetry query command to the F2000 at the configured polling interval (defaulting to 5 seconds, configurable between 5 and 30 seconds) to update sensor data and prevent the Bluetooth radio from shutting down after the 12-hour inactivity limit.

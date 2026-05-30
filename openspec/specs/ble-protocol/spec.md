@@ -1,7 +1,7 @@
 # ble-protocol Specification
 
 ## Purpose
-TBD - created by archiving change anker-solix-ble-hacs. Update Purpose after archive.
+This specification defines the unencrypted Bluetooth Low Energy (BLE) communication characteristics, frame headers, packet structures, and decoding schemas used to interface with the Anker Solix F2000.
 ## Requirements
 ### Requirement: Unencrypted BLE Communication Protocol
 The system SHALL use unencrypted BLE characteristic read/write operations on custom UUIDs `7777` (write) and `8888` (notify) for commanding and receiving telemetry from the Anker F2000.

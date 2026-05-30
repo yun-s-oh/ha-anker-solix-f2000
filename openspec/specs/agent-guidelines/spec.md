@@ -1,7 +1,7 @@
 # agent-guidelines Specification
 
 ## Purpose
-TBD - created by archiving change anker-solix-ble-hacs. Update Purpose after archive.
+This specification establishes standard technical guidelines, codebase layout structures, and coding paradigms for automated developer agents and contributors working in this repository.
 ## Requirements
 ### Requirement: Structured Technical Documentation
 The repository SHALL contain standardized markdown files detailing the codebase layout, module dependencies, and code guidelines for developer and agent reference.

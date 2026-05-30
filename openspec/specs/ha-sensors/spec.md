@@ -1,7 +1,7 @@
 # ha-sensors Specification
 
 ## Purpose
-TBD - created by archiving change anker-solix-ble-hacs. Update Purpose after archive.
+This specification defines the exposed Home Assistant sensor and binary sensor platforms, including configuration flow entry options and dynamic polling updates.
 ## Requirements
 ### Requirement: HA BLE Configuration Flow
 The Home Assistant integration SHALL implement a `config_flow` allowing the user to select the discovered F2000 from a list of nearby BLE devices, or manually input the MAC address as a fallback.
