@@ -13,12 +13,14 @@
 - [ ] 1.4.5 Test Screen Timeout commands (20s, 30s, 1m, 5m, 30m) and validate State ACK updates
 - [ ] 1.4.6 Test Screen Brightness adjustment commands and validate State ACK updates
 - [ ] 1.4.7 Test AC Recharging Power Limit commands (200W - 2200W) and validate State ACK updates
-- [ ] 1.4.8 Document finalized byte structures and ACK patterns in the Design Document
+- [ ] 1.4.8 Verify unencrypted AC Output end time commands and validate State ACK updates
+- [ ] 1.4.9 Verify unencrypted DC Output end time commands and validate State ACK updates
+- [ ] 1.4.10 Document finalized byte structures and ACK patterns in the Design Document
 
 ## 2. Core Home Assistant Controls Integration
 
 - [ ] 2.1 Add `switch.py` exposing AC Output, DC Output, and Power Saving Mode
-- [ ] 2.2 Add `select.py` exposing LED Brightness, Screen Brightness, and Screen Timeout
+- [ ] 2.2 Add `select.py` exposing LED Brightness, Screen Brightness, Screen Timeout, and AC/DC Output end timers
 - [ ] 2.3 Add `number.py` exposing AC Recharging Power limit
 - [ ] 2.4 Update HASS setup registration under `__init__.py` to load new control platforms
 
