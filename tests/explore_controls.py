@@ -190,7 +190,9 @@ class ExplorationConsole:
             print("8. LED Light LOW (Preset)")
             print("9. LED Light MID (Preset)")
             print("10. LED Light HIGH (Preset)")
-            print("11. Back to Main Menu")
+            print("11. Power Saving Mode ON (Preset)")
+            print("12. Power Saving Mode OFF (Preset)")
+            print("13. Back to Main Menu")
             choice = input("Select preset: ").strip()
 
             if choice == "1":
@@ -234,6 +236,14 @@ class ExplorationConsole:
                 packet = build_f2000_control_packet(0x8B, 0x03)
                 await self.send_payload(packet)
             elif choice == "11":
+                # Power Saving Mode ON preset (Cmd: 8A, Value: 01)
+                packet = build_f2000_control_packet(0x8A, 0x01)
+                await self.send_payload(packet)
+            elif choice == "12":
+                # Power Saving Mode OFF preset (Cmd: 8A, Value: 00)
+                packet = build_f2000_control_packet(0x8A, 0x00)
+                await self.send_payload(packet)
+            elif choice == "13":
                 break
 
     async def test_encrypted_solixble(self) -> None:
