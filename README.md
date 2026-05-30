@@ -2,10 +2,12 @@
 
 A premium, cloud-free custom HACS integration for the **Anker Solix F2000 (PowerHouse 767)** portable power station, operating completely locally via Bluetooth Low Energy (BLE).
 
-This repository contains local testing CLI verification scripts, diagnostic GATT utilities, and technical specification guidelines to verify telemetry streams before integration scaffolding.
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![Open your Home Assistant instance and open a repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=yunseokoh&repository=ha-anker-solix-f2000&category=integration)
+[![Add Integration to your Home Assistant instance.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=anker_solix_f2000)
 
 > [!NOTE]
-> This integration leverages local BLE advertising, bypassing latency, internet dependencies, and cloud API limits, enabling a fully cloud-free smart home dashboard.
+> This integration leverages unencrypted local BLE notifications, bypassing latency, internet dependencies, and cloud API limits, enabling a fully local smart home dashboard.
 
 ---
 
@@ -21,175 +23,173 @@ graph TD
     B -- Yes --> D
     D --> E[Subscribe to Telemetry Char 00008888]
     E --> F{Receive Bytes?}
-    F -- Yes --> G[Print Raw Byte Grid & Decoded JSON]
+    F -- Yes --> G[Print Decoded JSON & Format UI]
     F -- No (Timeout 5s) --> H[Ping Command Char 00007777]
     H --> F
 ```
 
 ---
 
-## ⏰ The Bluetooth Timeout Problem
+## ⏰ The Bluetooth Timeout Problem (Mitigation)
 
 > [!WARNING]
-> The Anker Solix F2000 has a frustrating firmware behaviour: if no Bluetooth connection is active for **12 hours**, the device **silently disables its Bluetooth radio** to "save power." This forces you to physically walk over to the unit and press the Bluetooth button every single day to re-enable it.
->
-> Yes — Anker decided to kill Bluetooth to save milliwatts on a device with a **2,048 Wh (2 kWh)** battery capacity.
+> The Anker Solix F2000 firmware automatically shuts off its Bluetooth radio after **12 hours** of inactivity. To re-enable it, you must physically walk over to the unit and press the IoT/Bluetooth button.
+> 
+> Yes — Anker decided to save milliwatts on a massive **2,048 Wh (2 kWh)** battery capacity by killing its local control channel.
 
-This integration solves the problem permanently:
+This integration solves this problem permanently:
 
 | Without Integration | With Integration |
 |---|---|
-| BLE radio shuts off after 12h of inactivity | **Always on** — 30-second active polling keeps the connection alive |
+| BLE radio shuts off after 12h of inactivity | **Always active** — Continuous active polling keeps the connection alive |
 | Must physically press the BT button daily | Fully automated, zero manual intervention |
-| No real-time telemetry in Home Assistant | Live battery, power, and temperature sensors |
+| No real-time telemetry in Home Assistant | Live battery, power, temperature, and port status sensors |
 
 > [!TIP]
-> By issuing a telemetry query command every 30 seconds, the coordinator keeps the BLE radio awake indefinitely while simultaneously providing real-time sensor data to Home Assistant. The F2000 never enters Bluetooth sleep.
+> By querying the peripheral every few seconds, the coordinator keeps the BLE radio active indefinitely while providing real-time telemetry to Home Assistant.
 
 ---
 
-## 🛠️ Getting Started & Virtual Environment Setup
+## 🚀 Key Features
 
-To run the verification scripts and test local telemetry safely, configure an isolated Python 3.11 virtual environment under `test-scripts/`.
+* **100% Offline & Local**: Zero cloud dependencies or internet access required.
+* **Unified Battery Indicator**: Automatically maps `total_pct` to `"Battery"`, allowing HASS to natively display your power station's state of charge next to the integration card logo.
+* **Diagnostic Isolation**: Sub-pack metrics (`internal_pct` and `external_pct`) are correctly categorized as `DIAGNOSTIC` to prevent unconnected expansion batteries from overriding device-level status.
+* **Setup-Level Polling Options**: Enter active polling intervals (5s–30s) and reconnection ceiling parameters directly inside the initial configuration setup step.
+* **Embedded Brand Assets**: Polished custom high-resolution icons and logos packaged offline inside `brand/` for native dashboard styling.
+
+---
+
+## ⚙️ Configuration Options
+
+After installation, the integration can be configured during initial setup or customized later via HASS Options:
+
+| Setting Name | Schema Key | Allowed Range | Default | Description |
+|---|---|---|---|---|
+| **MAC Address** | `address` | XX:XX:XX:XX:XX:XX | N/A | Target physical BLE MAC address or macOS UUID |
+| **Integration Name** | `name` | String | `767_PowerHouse` | Friendly name for the device registry |
+| **Active Polling Rate** | `poll_interval` | `5` to `30` seconds | `5` | Active query telemetry poll frequency |
+| **Reconnection Delay** | `max_retry_interval` | `30` to `300` seconds | `30` | Maximum reconnection back-off ceiling |
+
+---
+
+## 📊 Exposed Platforms & Entities
+
+The F2000 BLE integration exposes a wide selection of telemetry sensors:
+
+### Sensor Platform (`sensor`)
+
+| Entity Name | Key | Device Class | Unit | Category | Description |
+|---|---|---|---|---|---|
+| **Battery** | `total_pct` | `battery` | `%` | None (Badge) | Main battery State of Charge |
+| **Internal Battery** | `internal_pct` | `battery` | `%` | `diagnostic` | Main internal battery capacity |
+| **External Battery Expansion** | `external_pct` | `battery` | `%` | `diagnostic` | Unconnected/Connected expansion pack capacity |
+| **Battery Operating State** | `battery_state` | None | None | None | Current state (Idle, Discharging, Charging) |
+| **Battery Runtime Remaining** | `battery_remaining_minutes` | `duration` | `min` | None | Calculated operating minutes remaining |
+| **Internal Battery Temperature** | `internal_temp_c` | `temperature` | `°C` | None | Temperature of the main internal battery |
+| **External Battery Temperature** | `external_temp_c` | `temperature` | `°C` | None | Temperature of the expansion battery |
+| **AC Input Power** | `ac_input_w` | `power` | `W` | None | Power imported from grid AC |
+| **Solar Input Power** | `solar_input_w` | `power` | `W` | None | Power imported from solar PV |
+| **Total Input Power** | `total_input_w` | `power` | `W` | None | Combined input load |
+| **AC Outlet Power Output** | `ac_outlet_w` | `power` | `W` | None | Load consumed by active AC outlets |
+| **Total Output Power** | `total_output_w` | `power` | `W` | None | Combined output load |
+| **USB-C Port 1 Power** | `usb_c1_w` | `power` | `W` | None | Load consumed by USB-C Port 1 |
+| **USB-C Port 2 Power** | `usb_c2_w` | `power` | `W` | None | Load consumed by USB-C Port 2 |
+| **USB-C Port 3 Power** | `usb_c3_w` | `power` | `W` | None | Load consumed by USB-C Port 3 |
+| **USB-A Port 1 Power** | `usb_a1_w` | `power` | `W` | None | Load consumed by USB-A Port 1 |
+| **USB-A Port 2 Power** | `usb_a2_w` | `power` | `W` | None | Load consumed by USB-A Port 2 |
+| **12V Car Port 1 Power** | `dc_12v_port1_w` | `power` | `W` | None | Load consumed by Car Port 1 |
+| **12V Car Port 2 Power** | `dc_12v_port2_w` | `power` | `W` | None | Load consumed by Car Port 2 |
+| **12V Car Port 1 Timer** | `dc_12v_port1_timer` | `duration` | `s` | None | Configured timer remaining |
+
+### Binary Sensor Platform (`binary_sensor`)
+
+| Entity Name | Key | Device Class | Category | Description |
+|---|---|---|---|---|
+| **AC Sockets Power State** | `ac_outlet_on` | `running` | None | `True` when AC sockets are active |
+| **12V Car Port 1 Switch State** | `dc_12v_port1_on` | `running` | None | `True` when Car Port 1 is active |
+| **12V Car Port 2 Switch State** | `dc_12v_port2_on` | `running` | None | `True` when Car Port 2 is active |
+| **USB-C Port 1 Switch State** | `usb_c1_on` | `running` | None | `True` when USB-C Port 1 is active |
+| **USB-C Port 2 Switch State** | `usb_c2_on` | `running` | None | `True` when USB-C Port 2 is active |
+| **USB-C Port 3 Switch State** | `usb_c3_on` | `running` | None | `True` when USB-C Port 3 is active |
+| **USB-A Port 1 Switch State** | `usb_a1_on` | `running` | None | `True` when USB-A Port 1 is active |
+| **USB-A Port 2 Switch State** | `usb_a2_on` | `running` | None | `True` when USB-A Port 2 is active |
+
+---
+
+## 🧪 Standalone CLI Verification & Testing Suite
+
+An isolated Python virtual environment is housed under `tests/` to safely query telemetry, probe peripheral structures, and execute unit tests completely independent of Home Assistant.
 
 ### 1. Initialize Virtual Environment
-Navigate to your workspace and create the virtual environment:
+Navigate to the root directory and initialize the environment:
 ```bash
 # Create venv using Python 3.11
-python3.11 -m venv test-scripts/venv
+python3.11 -m venv tests/venv
 
-# Activate the virtual environment
-source test-scripts/venv/bin/activate
+# Activate virtual environment
+source tests/venv/bin/activate
+
+# Install required dependencies
+pip install -r tests/requirements.txt
 ```
 
-### 2. Install Required Dependencies
-Install the required packages (`bleak` for BLE connectivity and `SolixBLE` for structured parsing):
-```bash
-pip install -r test-scripts/requirements.txt
-```
-
----
-
-## ⚙️ Configuration (`.env`)
-
-To protect your local hardware parameters from being leaked in public repositories, they are safely loaded from a Git-ignored `.env` file at the root.
-
+### 2. Configure Local Hardware parameters (`.env`)
 Create a `.env` file at the root:
 ```ini
 # Private Local Hardware Parameters (Git-Ignored)
-ANKER_MAC_ADDRESS=XX:XX:XX:XX:XX:XX  # Your Anker BLE MAC Address
+ANKER_MAC_ADDRESS=XX:XX:XX:XX:XX:XX  # Target BLE MAC Address
 ANKER_DEVICE_NAME=767_PowerHouse
 ```
 
----
+### 3. Run CLI Scripts
+Ensure your Python virtual environment is active (`source tests/venv/bin/activate`) before running the scripts.
 
-## 🔍 Running Verification Scripts
-
-### A. BLE Device Scanning & Auto-Configuration
-To scan for nearby Anker devices and automatically configure your local `.env` file, place your F2000 in active Bluetooth pairing mode (press the physical IoT/Bluetooth button on the front of the unit once so that the Bluetooth symbol begins blinking) and run:
-```bash
-test-scripts/venv/bin/python test-scripts/test_passive_telemetry.py --scan
-```
-> [!TIP]
-> Once a candidate is discovered, the script will register its BLE MAC address and name inside your `.env` file and exit cleanly. Subsequent commands (diagnostics, telemetry, and heartbeats) read from this file and run parameter-free!
-
-
-### B. GATT Database Diagnostics
-Inspect the service GATT structure to confirm the device characteristics (reads MAC from the configured `.env` file):
-```bash
-test-scripts/venv/bin/python test-scripts/diagnose_gatt.py
-```
-
-### C. Streaming Decoded Passive Telemetry
-Subscribe to telemetry notifications, parse the unencrypted 102-byte packets continuously, and print a formatted real-time dashboard:
-```bash
-test-scripts/venv/bin/python test-scripts/test_passive_telemetry.py
-```
-
-### D. Verifying Heartbeats & Connection Persistence
-Test active 5-minute heartbeats to verify connection persistence and BLE radio sleep prevention:
-```bash
-test-scripts/venv/bin/python test-scripts/test_heartbeat.py
-```
-
-### E. Running Automated Unit Tests
-To execute the comprehensive mock telemetry validation unit tests using `pytest` inside the local virtual environment:
-```bash
-test-scripts/venv/bin/pytest
-```
-> [!NOTE]
-> This command runs `test-scripts/test_mock_telemetry.py` to assert correct byte extraction, register scaling, and checksum validation against the mock F2000 hardware state machine without requiring a physical BLE connection.
+* **Scan & Auto-Configure**: Scan for nearby F2000 devices and auto-write MAC parameters directly to your root `.env` file:
+  ```bash
+  tests/venv/bin/python tests/test_passive_telemetry.py --scan
+  ```
+* **Decoded Telemetry Stream**: Connect and print continuous formatted real-time battery status reports:
+  ```bash
+  tests/venv/bin/python tests/test_passive_telemetry.py
+  ```
+  Add the `--raw` flag to dump the raw hex byte grid side-by-side with the decoded metrics:
+  ```bash
+  tests/venv/bin/python tests/test_passive_telemetry.py --raw
+  ```
+* **GATT Service Dumper**: Probe physical characteristics:
+  ```bash
+  tests/venv/bin/python tests/diagnose_gatt.py
+  ```
+* **Heartbeat Verification**: Test active connection persistence pings:
+  ```bash
+  tests/venv/bin/python tests/test_heartbeat.py
+  ```
+* **Run Mock Telemetry Pytest**: Execute unit tests mocking the F2000 state machine offline:
+  ```bash
+  tests/venv/bin/pytest tests/
+  ```
+  > [!NOTE]
+  > This command runs `tests/test_mock_telemetry.py` to assert correct byte scaling, offset calculation, and dynamic coordinator rescheduling logic without requiring a physical BLE radio connection.
 
 ---
 
-## 🛍️ Installation via HACS (Home Assistant Community Store)
+## 🐳 Running Home Assistant Locally (Docker Compose)
 
-You can easily install this integration into your Home Assistant environment via HACS as a **Custom Repository**. This delivers simple plug-and-play installation and keeps the component up to date.
-
-### 1. Add Custom Repository to HACS
-1. Open your Home Assistant UI and navigate to **HACS** → **Integrations**.
-2. Click the three dots `⋮` in the top right corner and select **Custom repositories**.
-3. Under **Repository**, enter the GitHub URL of this repository:
-   ```text
-   https://github.com/yunseokoh/ha-anker-solix-f2000
-   ```
-4. Under **Category**, select **Integration** and click **Add**.
-
-### 2. Download the Integration
-1. Click **+ Explore & Download Repositories** in the bottom right corner of HACS.
-2. Search for **"Anker Solix F2000"** and select it.
-3. Click **Download** in the bottom right corner and select the latest release version.
-4. **Restart Home Assistant** to load the custom component files.
-
-### 3. Configure the Integration in Home Assistant
-1. Navigate to **Settings** → **Devices & Services** → **Add Integration**.
-2. Search for **"Anker Solix F2000"** and select it.
-3. If using an ESPHome Bluetooth Proxy (or if running on a native Bluetooth host), the config flow will **automatically scan and discover** your F2000 device. Select it from the list.
-4. If no device is discovered, select **"Manually Enter MAC Address..."** and input your device's BLE MAC address.
-
-### ⚙️ Options & Dynamic Telemetry Polling Configuration
-Once configured, you can click **Configure** on the integration card at any time to dynamically customize performance parameters:
-*   **Active Polling Interval**: Change how frequently Home Assistant queries the F2000 for telemetry. Selectable between **5 seconds** (for real-time power tracking) and **30 seconds** (default: 5 seconds).
-*   **Maximum Reconnection Delay**: Configure the maximum retry limit for the exponential back-off recovery loop if the connection is temporarily occupied by the official mobile app. Selectable between **30 seconds** and **300 seconds** (default: 30 seconds).
-
-All options apply **instantly** without requiring an integration restart.
-
----
-
-## 🐳 Deploying Home Assistant with Docker
-
-This repository includes a pre-configured `docker-compose.yml` to package and run a local Home Assistant stable instance for dynamic custom component integration testing.
-
-### 1. Spin Up Local Home Assistant
-To spin up a local Home Assistant stable instance with our custom component dynamically mapped:
+Scaffold a local testing container mapping custom components dynamically:
 ```bash
-# Spin up Home Assistant in the background
+# Start Home Assistant in host networking mode
 docker compose up -d homeassistant
 ```
-*   **Web Portal**: Access your local Home Assistant UI at [http://localhost:8123](http://localhost:8123).
-*   **Active Scaffolding**: Any modifications made to `custom_components/anker_solix_f2000/` are instantly shared with the container and can be dynamically reloaded from the Home Assistant UI without rebuilding.
-
-### 🛜 Host Bluetooth & OS Compatibility Guidelines
-To ensure Home Assistant can discover and connect to your physical Anker F2000 unit over BLE inside Docker, note the following system requirements:
-
-*   **Linux Hosts**: 
-    *   The container uses **Host Networking** (`network_mode: host`) to directly bind to physical Bluetooth controllers.
-    *   It mounts the **System D-Bus Socket** (`/var/run/dbus:/var/run/dbus:ro`) to communicate with the host's `bluez` Bluetooth system daemon. Ensure `dbus` is active on your host.
-*   **macOS Hosts**: 
-    *   > [!WARNING]
-    *   > Docker on macOS runs inside a Linux virtual machine hypervisor. Because macOS does not support passing CoreBluetooth hardware controllers through to hypervisor guests, **Home Assistant running in Docker on macOS cannot access physical Bluetooth adapters**.
-    *   👉 **Action**: To test real BLE operations (scanning, streaming, heartbeats) or to run `pytest` unit tests on macOS, execute the local Python CLI verification scripts or `pytest` directly on your host machine inside the local virtual environment (`test-scripts/venv/`).
+Access the local web portal at [http://localhost:8123](http://localhost:8123).
 
 ---
 
-## ⚠️ Troubleshooting & macOS Bluetooth Caching
+## ⚠️ Troubleshooting & macOS Bluetooth Guidelines
 
-Operating Bluetooth integrations on macOS can sometimes encounter system-level locking. Follow these guidelines to resolve connection drops:
-
-*   **Exclusive Connection Lockout**: Anker devices only support **one active BLE client**. Ensure the **official Anker mobile app is completely force-closed** to prevent link lockouts.
-*   **System Pairing/Bonding**: macOS will silently drop notification packet streams if secure pairing is not finalized.
-    *   👉 **Action**: Press the physical **IoT button** on the front of the F2000 once to put it in active advertising mode.
-*   **Resetting Caches**: If macOS aggressively caches old GATT profiles:
-    *   Turn Bluetooth off and on in System Settings.
-    *   "Forget" the peripheral in macOS Bluetooth Settings.
-    *   Restart the system Bluetooth daemon: `sudo pkill bluetoothd`
+* **Exclusive Connection Lockout**: Anker units support **only one active Bluetooth connection**. Completely force-close the official Anker app on all mobile devices before connecting Home Assistant.
+* **macOS Host Limitations**: Hypervisors running Docker on macOS cannot pass physical Bluetooth controllers. Run unit tests and verification CLI scripts natively inside your macOS host's Python virtual environment (`tests/venv/`) to allow CoreBluetooth access.
+* **macOS Caching Issues**: If peripheral structures become unresponsive, toggle your Bluetooth radio off/on in System Settings, or reset the local daemon:
+  ```bash
+  sudo pkill bluetoothd
+  ```
