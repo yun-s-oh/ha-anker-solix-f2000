@@ -1,0 +1,11 @@
+{
+  "domain": "anker_solix_f2000",
+  "name": "Anker Solix F2000",
+  "codeowners": ["@yunseokoh"],
+  "config_flow": true,
+  "dependencies": ["bluetooth"],
+  "documentation": "https://github.com/yunseokoh/ha-anker-solix-f2000",
+  "iot_class": "local_polling",
+  "requirements": ["bleak>=0.21.1", "bleak-retry-connector>=3.4.0"],
+  "version": "1.0.0"
+}
