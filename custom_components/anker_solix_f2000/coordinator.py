@@ -93,16 +93,21 @@ def parse_telemetry(data: bytes) -> dict[str, Any]:
     except (UnicodeDecodeError, IndexError):
         serial = "N/A"
 
+    # Check if external expansion battery is physically connected (non-zero temp or percent)
+    external_connected = data[71] != 0 or data[67] != 0
+    external_pct = data[71] if external_connected else None
+    external_temp = data[67] if external_connected else None
+
     return {
         "serial": serial,
         # Battery details
         "internal_pct": data[70],
-        "external_pct": data[71],
+        "external_pct": external_pct,
         "total_pct": data[72],
         "battery_state": battery_state,
         "battery_remaining_minutes": total_minutes,
         "internal_temp_c": data[66],
-        "external_temp_c": data[67],
+        "external_temp_c": external_temp,
         # Input power
         "ac_input_w": extract16(data, 19),
         "solar_input_w": extract16(data, 37),
@@ -210,7 +215,9 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                 self._retry_delay = MIN_RETRY_INTERVAL
 
                 # Subscribe to unencrypted notification stream
-                await self._client.start_notify(NOTIFY_UUID, self._notification_handler)  # type: ignore[arg-type]
+                await self._client.start_notify(
+                    NOTIFY_UUID, self._notification_handler  # type: ignore[arg-type]
+                )
                 _LOGGER.debug("Subscribed to BLE notifications on UUID %s", NOTIFY_UUID)
 
                 # Send initial active query immediately
