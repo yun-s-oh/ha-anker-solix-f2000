@@ -92,6 +92,14 @@ Test active 5-minute heartbeats to verify connection persistence and BLE radio s
 test-scripts/venv/bin/python test-scripts/test_heartbeat.py
 ```
 
+### E. Running Automated Unit Tests
+To execute the comprehensive mock telemetry validation unit tests using `pytest` inside the local virtual environment:
+```bash
+test-scripts/venv/bin/pytest
+```
+> [!NOTE]
+> This command runs `test-scripts/test_mock_telemetry.py` to assert correct byte extraction, register scaling, and checksum validation against the mock F2000 hardware state machine without requiring a physical BLE connection.
+
 ---
 
 ## 🐳 Deploying Home Assistant with Docker
