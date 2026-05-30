@@ -54,7 +54,7 @@ Instead, **split them into multiple atomic commits**:
 3. Proceed to validation (Step 2) and commit (Step 5) only for the staged files.
 4. Repeat staging, validation, and committing for the remaining files:
    ```bash
-   git add test-scripts/test_passive_telemetry.py
+   git add tests/test_passive_telemetry.py
    ```
 
 ```bash

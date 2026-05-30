@@ -129,7 +129,8 @@ def test_coordinator_dynamic_rescheduling() -> None:
     sys.modules["homeassistant.exceptions"] = mock_hass
     sys.modules["homeassistant.helpers"] = mock_hass
     sys.modules["homeassistant.helpers.update_coordinator"] = mock_hass
-    sys.modules["homeassistant.helpers.update_coordinator"].DataUpdateCoordinator = DummyDataUpdateCoordinator
+    mock_up_coord = sys.modules["homeassistant.helpers.update_coordinator"]
+    mock_up_coord.DataUpdateCoordinator = DummyDataUpdateCoordinator
 
     # Ensure custom_components path is importable
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
@@ -171,5 +172,3 @@ def test_coordinator_dynamic_rescheduling() -> None:
 
     # Assert that the update interval has dynamically updated to 15 seconds
     assert coordinator.update_interval == timedelta(seconds=15)
-
-

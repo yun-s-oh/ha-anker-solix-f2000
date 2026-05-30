@@ -17,7 +17,7 @@ Welcome to the Anker Solix F2000 (PowerHouse 767) Home Assistant BLE Custom Inte
 │   │       └── specs/         # Sub-component requirements and specifications
 │   ├── config.yaml            # OpenSpec validation configuration
 │   └── style-guide.md         # Custom style standards (PEP 8, line limits, guidelines)
-├── test-scripts/              # Isolated functional verification suite
+├── tests/                     # Isolated functional verification suite
 │   ├── diagnose_gatt.py       # GATT database structure prober & service dumper
 │   ├── test_passive_telemetry.py # Standalone continuous polling & scanning script
 │   ├── requirements.txt       # Isolated script dependencies
@@ -71,7 +71,7 @@ All code contributions must follow these strict validation standards:
 *   **Type Hinting**: Provide explicit type hints for all parameters, variables, and return types.
 *   **Quality Checks**: Before staging files, always run syntax validation and linting using `flake8` under the isolated virtual environment:
     ```bash
-    ./test-scripts/venv/bin/flake8 test-scripts/test_passive_telemetry.py --max-line-length=100
-    ./test-scripts/venv/bin/python -m py_compile test-scripts/test_passive_telemetry.py
+    ./tests/venv/bin/flake8 tests/test_passive_telemetry.py --max-line-length=100
+    ./tests/venv/bin/python -m py_compile tests/test_passive_telemetry.py
     ```
 *   **DataUpdateCoordinator**: When transitioning scripts to the core Home Assistant integration, always channel BLE reads and updates through a central `DataUpdateCoordinator` to manage polling cycles and prevent connection overload.

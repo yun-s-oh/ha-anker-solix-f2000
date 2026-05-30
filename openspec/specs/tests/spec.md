@@ -1,7 +1,7 @@
-# test-scripts Specification
+# tests Specification
 
 ## Purpose
-TBD - created by archiving change anker-solix-ble-hacs. Update Purpose after archive.
+Specification for the isolated tests and verification suite in the tests folder.
 ## Requirements
 ### Requirement: CLI Telemetry Logger
 The standalone Python test script SHALL connect to the designated F2000 MAC address and print a formatted console report of decoded telemetry.

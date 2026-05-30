@@ -9,7 +9,7 @@ from bleak import BleakClient, BleakScanner
 
 def load_env() -> None:
     """Dynamically find and load key-value pairs from .env or ../.env into os.environ."""
-    paths = [".env", "../.env", "test-scripts/.env"]
+    paths = [".env", "../.env", "tests/.env"]
     for path in paths:
         if os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:

@@ -28,7 +28,7 @@ logger = logging.getLogger("f2000_heartbeat")
 
 def load_env() -> None:
     """Dynamically load key-value pairs from .env files into environment variables."""
-    paths = [".env", "../.env", "test-scripts/.env"]
+    paths = [".env", "../.env", "tests/.env"]
     for path in paths:
         if os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:
