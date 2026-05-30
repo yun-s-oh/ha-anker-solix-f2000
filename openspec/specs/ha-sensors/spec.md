@@ -26,30 +26,48 @@ The integration SHALL utilize a single `DataUpdateCoordinator` to manage active 
 - **THEN** the DataUpdateCoordinator instantly updates its update interval to 10 seconds without restarting the integration.
 
 ### Requirement: Standardized Sensor and Binary Sensor Entities
-The integration SHALL expose comprehensive telemetry as native Home Assistant sensor and binary sensor entities with appropriate device classes and units.
+The integration SHALL expose comprehensive telemetry as native Home Assistant sensor and binary sensor entities with appropriate device classes and units. Both the internal battery capacity and external battery expansion capacity metrics SHALL be exposed as first-class standard sensor entities without diagnostic categorization to ensure they are visible in primary Home Assistant dashboards.
 
 #### Mapped Entities:
 - **Sensors (SensorDeviceClass.BATTERY, POWER, TEMPERATURE, etc.)**:
-  - Total Battery %
-  - Internal Battery %
-  - External Battery %
+  - Battery %
+  - Internal Battery % (Promoted to first-class, standard sensor)
+  - External Battery Expansion % (Promoted to first-class, standard sensor)
   - Internal Temperature (°C)
   - External Temperature (°C)
-  - Battery State (Idle, Charging, Discharging)
-  - Time Remaining (Duration)
-  - AC Input Watts (W)
-  - Solar Input Watts (W)
-  - Total Input Watts (W)
-  - AC Outlet Watts (W)
-  - Total Output Watts (W)
-  - USB-C1, USB-C2, USB-C3 Watts (W)
-  - USB-A1, USB-A2 Watts (W)
-  - 12V DC Port 1, Port 2 Watts (W)
+  - Battery Operating State (Idle, Charging, Discharging)
+  - Battery Runtime Remaining (Duration)
+  - AC Input Power (W)
+  - Solar Input Power (W)
+  - Total Input Power (W)
+  - AC Outlet Power Output (W)
+  - Total Output Power (W)
+  - USB-C Port 1, Port 2, Port 3 Power (W)
+  - USB-A Port 1, Port 2 Power (W)
+  - 12V Car Port 1, Port 2 Power (W)
 - **Binary Sensors (BinarySensorDeviceClass.CONNECTIVITY, POWER, etc.)**:
   - AC Outlet State (ON/OFF)
   - 12V DC State (ON/OFF)
   - Power Save Mode (ON/OFF)
-  - USB-C1, C2, C3 Active States (ON/OFF)
-  - USB-A1, A2 Active States (ON/OFF)
-  - 12V DC Port 1, Port 2 Active States (ON/OFF)
+  - USB-C Port 1, Port 2, Port 3 Active States (ON/OFF)
+  - USB-A Port 1, Port 2 Active States (ON/OFF)
+  - 12V Car Port 1, Port 2 Active States (ON/OFF)
+
+#### Scenario: Promoted battery sensors render in standard view
+- **WHEN** the integration is successfully added and telemetry is received
+- **THEN** both the "Internal Battery" and "External Battery Expansion" sensors SHALL be registered as standard entities without diagnostic categorization, making them visible in default Home Assistant dashboard cards.
+
+### Requirement: Primary Battery Entity Badge
+The primary battery sensor `total_pct` SHALL be registered with the name `"Battery"`. Home Assistant SHALL natively associate this entity as the main device battery status, displaying its value next to the integration card/logo in the UI.
+
+#### Scenario: Registering the sensor
+- **WHEN** the integration starts up and adds sensor entities
+- **THEN** the entity `sensor.<device_name>_battery` is successfully created with name `"Battery"`, and the sub-pack battery sensors remain diagnostic.
+
+### Requirement: Config Flow Options Setup
+The manual configuration flow step SHALL prompt the user for the MAC Address, Integration Name, Active Telemetry Polling Rate, and Maximum Reconnection Back-Off Limit. 
+
+#### Scenario: Submitting manual configuration setup options
+- **WHEN** the user inputs a valid MAC Address, Name, Polling Interval, and Max Retry limit in the setup step
+- **THEN** the config entry is created, and the parameters are stored in `entry.options` instantly.
 
