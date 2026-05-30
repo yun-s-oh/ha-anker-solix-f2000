@@ -66,3 +66,7 @@ spec
 *results.json
 *telemetry.json
 
+# Local Home Assistant Config Directory
+config/
+
+
