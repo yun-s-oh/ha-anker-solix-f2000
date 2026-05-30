@@ -32,7 +32,7 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     # Battery Metrics
     SensorEntityDescription(
         key="total_pct",
-        name="Total Battery",
+        name="Battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,

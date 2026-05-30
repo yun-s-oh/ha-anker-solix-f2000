@@ -16,6 +16,7 @@ from homeassistant import config_entries
 from homeassistant.components import bluetooth
 from homeassistant.const import CONF_ADDRESS, CONF_NAME
 from homeassistant.core import callback
+from homeassistant.helpers import selector
 
 from .const import (
     CONF_MAX_RETRY_INTERVAL,
@@ -43,7 +44,7 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
         config_entry: config_entries.ConfigEntry,
     ) -> AnkerSolixF2000OptionsFlowHandler:
         """Get the options flow for this handler."""
-        return AnkerSolixF2000OptionsFlowHandler(config_entry)
+        return AnkerSolixF2000OptionsFlowHandler()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -66,6 +67,10 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
             return self.async_create_entry(
                 title=name,
                 data={CONF_ADDRESS: selected_address, CONF_NAME: name},
+                options={
+                    CONF_POLL_INTERVAL: DEFAULT_POLL_INTERVAL,
+                    CONF_MAX_RETRY_INTERVAL: MAX_RETRY_INTERVAL,
+                },
             )
 
         # Retrieve discovered BLE devices using HA's central Bluetooth scanner
@@ -99,6 +104,8 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
         if user_input is not None:
             address = user_input[CONF_ADDRESS].strip().upper()
             name = user_input[CONF_NAME].strip() or "767_PowerHouse"
+            poll_interval = user_input.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+            max_retry = user_input.get(CONF_MAX_RETRY_INTERVAL, MAX_RETRY_INTERVAL)
 
             # Standard MAC format verification
             if len(address.split(":")) != 6:
@@ -110,6 +117,10 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
                 return self.async_create_entry(
                     title=name,
                     data={CONF_ADDRESS: address, CONF_NAME: name},
+                    options={
+                        CONF_POLL_INTERVAL: poll_interval,
+                        CONF_MAX_RETRY_INTERVAL: max_retry,
+                    },
                 )
 
         return self.async_show_form(
@@ -117,6 +128,26 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
             data_schema=vol.Schema({
                 vol.Required(CONF_ADDRESS): str,
                 vol.Optional(CONF_NAME, default="767_PowerHouse"): str,
+                vol.Required(
+                    CONF_POLL_INTERVAL, default=DEFAULT_POLL_INTERVAL
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=5,
+                        max=30,
+                        mode=selector.NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
+                vol.Required(
+                    CONF_MAX_RETRY_INTERVAL, default=MAX_RETRY_INTERVAL
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=30,
+                        max=300,
+                        mode=selector.NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
             }),
             errors=errors,
         )
@@ -124,10 +155,6 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
 
 class AnkerSolixF2000OptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for Anker Solix F2000."""
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -144,12 +171,26 @@ class AnkerSolixF2000OptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.options.get(
                         CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
                     ),
-                ): vol.All(vol.Coerce(int), vol.Range(min=5, max=30)),
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=5,
+                        max=30,
+                        mode=selector.NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
                 vol.Required(
                     CONF_MAX_RETRY_INTERVAL,
                     default=self.config_entry.options.get(
                         CONF_MAX_RETRY_INTERVAL, MAX_RETRY_INTERVAL
                     ),
-                ): vol.All(vol.Coerce(int), vol.Range(min=30, max=300)),
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=30,
+                        max=300,
+                        mode=selector.NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
             }),
         )

@@ -13,7 +13,9 @@
         "description": "Enter the physical Bluetooth MAC address of your Anker F2000 power station.",
         "data": {
           "address": "MAC Address",
-          "name": "Integration Name"
+          "name": "Integration Name",
+          "poll_interval": "Active Telemetry Polling Interval (seconds)",
+          "max_retry_interval": "Maximum Reconnection Back-Off Limit (seconds)"
         }
       }
     },
