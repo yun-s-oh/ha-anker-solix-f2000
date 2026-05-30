@@ -21,6 +21,10 @@ TELEMETRY_QUERY: Final[bytes] = bytes(
 )
 
 # Polling and retry configurations
-DEFAULT_POLL_INTERVAL: Final[int] = 30  # Active query poll frequency (seconds)
+DEFAULT_POLL_INTERVAL: Final[int] = 5  # Active query poll frequency (seconds)
 MIN_RETRY_INTERVAL: Final[int] = 5      # Initial reconnect back-off delay (seconds)
-MAX_RETRY_INTERVAL: Final[int] = 60       # Maximum reconnect back-off limit (60 seconds)
+MAX_RETRY_INTERVAL: Final[int] = 30       # Maximum reconnect back-off limit (30 seconds)
+
+# Options Flow Configuration Keys
+CONF_POLL_INTERVAL: Final[str] = "poll_interval"
+CONF_MAX_RETRY_INTERVAL: Final[str] = "max_retry_interval"

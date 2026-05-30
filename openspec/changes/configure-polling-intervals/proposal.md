@@ -2,6 +2,8 @@
 
 Currently, the Anker Solix F2000 Home Assistant integration polls for BLE telemetry at a hardcoded 30-second interval, and uses a hardcoded 60-second maximum reconnection retry back-off limit. While 30 seconds keeps the connection alive, many users desire higher resolution real-time telemetry (such as 5 seconds) to track power generation and consumption dynamics during home appliance activity. Conversely, hardcoding these intervals prevents advanced users from optimizing Bluetooth radio bandwidth, avoiding congestion, and adjusting reconnection schedules to fit their specific home network density.
 
+Furthermore, during Home Assistant system startups, the Bluetooth adapter might not be fully initialized or the F2000 might not have broadcasted its BLE advertisement yet. Currently, if the BLE device is not discovered on startup, the integration setup fails permanently. Raising a dynamic retry exception is required to let HASS automatically recover in the background.
+
 In addition, the repository currently lacks clear HACS custom repository installation instructions in the README and does not package premium, high-quality local branding assets (icons/logos). This limits the visual presentation of the integration inside the Home Assistant and HACS dashboards.
 
 ## What Changes
@@ -12,6 +14,7 @@ In addition, the repository currently lacks clear HACS custom repository install
   - **Default Poll Interval**: Selectable between 5 seconds and 30 seconds.
   - **Max Polling / Reconnection Back-Off**: Selectable between 30 seconds and 300 seconds.
 - **Dynamic Coordinator Adaptation**: Update the `BluetoothDataUpdateCoordinator` to dynamically read these intervals from the configuration entry options, automatically rescheduling update timers when modified.
+- **Resilient Startup Retry Logic**: In `__init__.py`, raise HASS `ConfigEntryNotReady` if the F2000 BLE device is not discovered at boot, enabling Home Assistant to safely schedule automatic background retries instead of failing permanently.
 - **HACS Custom Repository Installation Guide**: Revise and expand `README.md` to detail clean HACS installation procedures, referencing pattern structures from official and community integrations (such as Tuya and NeoVolt).
 - **Local Brand Assets Integration**: Implement local brand image delivery by placing high-quality custom Anker Solix icons and logos inside a new `brand/` directory inside the custom component, enabling native offline brand rendering inside Home Assistant.
 

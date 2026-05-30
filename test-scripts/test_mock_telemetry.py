@@ -94,3 +94,82 @@ def test_checksum_validation_rejection() -> None:
     parsed = parse_packet(bytes(raw_packet))
     assert parsed is not None
     assert parsed["type"] == "checksum_error"
+
+
+def test_coordinator_dynamic_rescheduling() -> None:
+    """Verify that coordinator dynamically reschedules update interval when options change."""
+    import sys
+    from unittest.mock import MagicMock
+    from datetime import timedelta
+    import asyncio
+    import os
+
+    # Stub/mock the entire homeassistant package and parent classes before importing coordinator
+    mock_hass = MagicMock()
+    mock_const = MagicMock()
+    mock_const.Platform = MagicMock()
+
+    class DummyDataUpdateCoordinator:
+        def __init__(self, hass, logger, *, name, update_interval=None) -> None:
+            self.hass = hass
+            self.logger = logger
+            self.name = name
+            self.update_interval = update_interval
+
+        @classmethod
+        def __class_getitem__(cls, item):
+            return cls
+
+    sys.modules["homeassistant"] = mock_hass
+    sys.modules["homeassistant.components"] = mock_hass
+    sys.modules["homeassistant.components.bluetooth"] = mock_hass
+    sys.modules["homeassistant.config_entries"] = mock_hass
+    sys.modules["homeassistant.const"] = mock_const
+    sys.modules["homeassistant.core"] = mock_hass
+    sys.modules["homeassistant.exceptions"] = mock_hass
+    sys.modules["homeassistant.helpers"] = mock_hass
+    sys.modules["homeassistant.helpers.update_coordinator"] = mock_hass
+    sys.modules["homeassistant.helpers.update_coordinator"].DataUpdateCoordinator = DummyDataUpdateCoordinator
+
+    # Ensure custom_components path is importable
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+
+    from custom_components.anker_solix_f2000.coordinator import (
+        AnkerSolixBluetoothUpdateCoordinator,
+    )
+    from custom_components.anker_solix_f2000.const import (
+        CONF_POLL_INTERVAL,
+        CONF_MAX_RETRY_INTERVAL,
+    )
+
+    class MockConfigEntry:
+        def __init__(self, options: dict) -> None:
+            self.options = options
+            self.entry_id = "test_entry"
+
+    hass = MagicMock()
+    entry = MockConfigEntry({
+        CONF_POLL_INTERVAL: 10,
+        CONF_MAX_RETRY_INTERVAL: 120,
+    })
+    device = MagicMock()
+
+    # Initialize coordinator with custom options
+    coordinator = AnkerSolixBluetoothUpdateCoordinator(hass, entry, device, "TestDevice")
+
+    # Assert initial values are loaded correctly from config entry options
+    assert coordinator.update_interval == timedelta(seconds=10)
+
+    # Simulate user changing options flow to 15 seconds
+    entry.options[CONF_POLL_INTERVAL] = 15
+
+    # Trigger the options update handler synchronously (mocking HA event loop)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(coordinator.async_update_options_handler())
+    loop.close()
+
+    # Assert that the update interval has dynamically updated to 15 seconds
+    assert coordinator.update_interval == timedelta(seconds=15)
+
+

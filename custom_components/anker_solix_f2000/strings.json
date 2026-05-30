@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Anker Solix F2000",
+        "description": "Select your discovered Anker Solix F2000 power station, or opt to manually input its Bluetooth MAC address.",
+        "data": {
+          "address": "Bluetooth MAC Address"
+        }
+      },
+      "manual": {
+        "title": "Manual Configuration",
+        "description": "Enter the physical Bluetooth MAC address of your Anker F2000 power station.",
+        "data": {
+          "address": "MAC Address",
+          "name": "Integration Name"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "The entered MAC address format is invalid. Please format as XX:XX:XX:XX:XX:XX."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Polling and Reconnection Options",
+        "description": "Adjust the telemetry polling rate and the maximum failover reconnection delay for your Anker Solix F2000.",
+        "data": {
+          "poll_interval": "Active Telemetry Polling Interval (seconds)",
+          "max_retry_interval": "Maximum Reconnection Back-Off Limit (seconds)"
+        }
+      }
+    }
+  }
+}

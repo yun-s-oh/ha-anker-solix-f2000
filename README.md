@@ -122,6 +122,40 @@ test-scripts/venv/bin/pytest
 
 ---
 
+## 🛍️ Installation via HACS (Home Assistant Community Store)
+
+You can easily install this integration into your Home Assistant environment via HACS as a **Custom Repository**. This delivers simple plug-and-play installation and keeps the component up to date.
+
+### 1. Add Custom Repository to HACS
+1. Open your Home Assistant UI and navigate to **HACS** → **Integrations**.
+2. Click the three dots `⋮` in the top right corner and select **Custom repositories**.
+3. Under **Repository**, enter the GitHub URL of this repository:
+   ```text
+   https://github.com/yunseokoh/ha-anker-solix-f2000
+   ```
+4. Under **Category**, select **Integration** and click **Add**.
+
+### 2. Download the Integration
+1. Click **+ Explore & Download Repositories** in the bottom right corner of HACS.
+2. Search for **"Anker Solix F2000"** and select it.
+3. Click **Download** in the bottom right corner and select the latest release version.
+4. **Restart Home Assistant** to load the custom component files.
+
+### 3. Configure the Integration in Home Assistant
+1. Navigate to **Settings** → **Devices & Services** → **Add Integration**.
+2. Search for **"Anker Solix F2000"** and select it.
+3. If using an ESPHome Bluetooth Proxy (or if running on a native Bluetooth host), the config flow will **automatically scan and discover** your F2000 device. Select it from the list.
+4. If no device is discovered, select **"Manually Enter MAC Address..."** and input your device's BLE MAC address.
+
+### ⚙️ Options & Dynamic Telemetry Polling Configuration
+Once configured, you can click **Configure** on the integration card at any time to dynamically customize performance parameters:
+*   **Active Polling Interval**: Change how frequently Home Assistant queries the F2000 for telemetry. Selectable between **5 seconds** (for real-time power tracking) and **30 seconds** (default: 5 seconds).
+*   **Maximum Reconnection Delay**: Configure the maximum retry limit for the exponential back-off recovery loop if the connection is temporarily occupied by the official mobile app. Selectable between **30 seconds** and **300 seconds** (default: 30 seconds).
+
+All options apply **instantly** without requiring an integration restart.
+
+---
+
 ## 🐳 Deploying Home Assistant with Docker
 
 This repository includes a pre-configured `docker-compose.yml` to package and run a local Home Assistant stable instance for dynamic custom component integration testing.

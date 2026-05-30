@@ -17,10 +17,13 @@ from bleak import BleakClient, BleakError
 from bleak.backends.device import BLEDevice
 from bleak_retry_connector import establish_connection
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
+    CONF_MAX_RETRY_INTERVAL,
+    CONF_POLL_INTERVAL,
     DEFAULT_POLL_INTERVAL,
     DOMAIN,
     HEADER_PREFIX,
@@ -134,10 +137,12 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
     def __init__(
         self,
         hass: HomeAssistant,
+        config_entry: ConfigEntry,
         device: BLEDevice,
         device_name: str,
     ) -> None:
         """Initialize the coordinator."""
+        self.config_entry = config_entry
         self.device = device
         self.device_name = device_name
         self._client: BleakClient | None = None
@@ -146,11 +151,21 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
         self._retry_delay = MIN_RETRY_INTERVAL
         self._state_data: dict[str, Any] = {}
 
+        poll_interval = self.config_entry.options.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN}_{device_name}",
-            update_interval=timedelta(seconds=DEFAULT_POLL_INTERVAL),
+            update_interval=timedelta(seconds=poll_interval),
+        )
+
+    async def async_update_options_handler(self) -> None:
+        """Handle dynamic options updates from HASS configuration entry flow."""
+        poll_interval = self.config_entry.options.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        self.update_interval = timedelta(seconds=poll_interval)
+        _LOGGER.info(
+            "Dynamic poll interval updated to %d seconds. Rescheduling timer.", poll_interval
         )
 
     def _notification_handler(self, _sender: int, data: bytearray) -> None:
@@ -195,7 +210,7 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                 self._retry_delay = MIN_RETRY_INTERVAL
 
                 # Subscribe to unencrypted notification stream
-                await self._client.start_notify(NOTIFY_UUID, self._notification_handler)
+                await self._client.start_notify(NOTIFY_UUID, self._notification_handler)  # type: ignore[arg-type]
                 _LOGGER.debug("Subscribed to BLE notifications on UUID %s", NOTIFY_UUID)
 
                 # Send initial active query immediately
@@ -235,8 +250,9 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
             if success:
                 break
 
-            # Increase delay exponentially up to 15 minutes
-            self._retry_delay = min(self._retry_delay * 2, MAX_RETRY_INTERVAL)
+            # Increase delay exponentially up to max back-off
+            max_retry = self.config_entry.options.get(CONF_MAX_RETRY_INTERVAL, MAX_RETRY_INTERVAL)
+            self._retry_delay = min(self._retry_delay * 2, max_retry)
 
     async def _async_write_query(self) -> None:
         """Write the unencrypted telemetry query to trigger a data stream update."""

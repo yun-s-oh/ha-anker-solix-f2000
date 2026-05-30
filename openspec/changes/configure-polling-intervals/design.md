@@ -40,6 +40,11 @@ To support this cleanly, we need to introduce a Home Assistant `OptionsFlow` tha
 - **Decision**: Design a detailed HACS custom repository installation section inside `README.md` following the highly professional, visual layout of `neovoltBattery_HomeAssistantPlugin`.
 - **Rationale**: A visual layout featuring HACS custom repository configuration menus reduces setup friction, assists novice smart home users, and gives the project a high-end product feel.
 
+### Decision 5: Resilient Startup Handling
+- **Option Considered**: Returning `False` in `async_setup_entry` or looping/waiting synchronously for the BLE device to be discovered.
+- **Decision**: Raise `ConfigEntryNotReady` if the BLEDevice cannot be resolved from the host Bluetooth adapter cache during boot.
+- **Rationale**: Synchronous wait loops during HASS startup block Home Assistant's initialization threads, causing system-wide log warnings. Returning `False` permanently disables the integration, requiring manual user intervention to reload. Raising `ConfigEntryNotReady` delegates scheduling to HASS's built-in retry engine, which automatically schedules clean setup attempts with exponential back-off delays until the BLE adapter or peripheral is detected.
+
 ## Risks / Trade-offs
 
 - **[Risk] RF Congestion with 5-Second Polling**: A high poll rate could saturate the Bluetooth controller queue, particularly on platforms with multiple BLE integrations.

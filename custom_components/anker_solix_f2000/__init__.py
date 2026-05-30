@@ -13,6 +13,7 @@ from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_ADDRESS, CONF_NAME, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import DOMAIN
 from .coordinator import AnkerSolixBluetoothUpdateCoordinator
@@ -32,20 +33,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Resolve physical BLEDevice from the central HA Bluetooth subsystem
     ble_device = bluetooth.async_ble_device_from_address(hass, address, connectable=True)
     if not ble_device:
-        _LOGGER.error("Could not find connectable BLE device at address: %s", address)
-        return False
+        raise ConfigEntryNotReady(
+            f"Could not find connectable BLE device at address: {address}. "
+            "Will retry setup automatically when the device is discovered."
+        )
 
     # Initialize and startup the long-lived BLE coordinator
-    coordinator = AnkerSolixBluetoothUpdateCoordinator(hass, ble_device, name)
+    coordinator = AnkerSolixBluetoothUpdateCoordinator(hass, entry, ble_device, name)
     await coordinator.async_start()
 
     # Store coordinator instance globally inside HASS context
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
+    # Register options update listener to handle dynamic poll rate changes
+    entry.async_on_unload(entry.add_update_listener(async_update_options))
+
     # Forward entry setups to platform modules (sensor.py, binary_sensor.py)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
+
+
+async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update callback dynamically."""
+    _LOGGER.debug("Options updated for entry %s, updating coordinator settings", entry.entry_id)
+    coordinator: AnkerSolixBluetoothUpdateCoordinator | None = hass.data[DOMAIN].get(entry.entry_id)
+    if coordinator:
+        await coordinator.async_update_options_handler()
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
