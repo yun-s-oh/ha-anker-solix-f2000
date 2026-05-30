@@ -9,6 +9,7 @@
     "bluetooth"
   ],
   "documentation": "https://github.com/yun-s-oh/ha-anker-solix-f2000",
+  "issue_tracker": "https://github.com/yun-s-oh/ha-anker-solix-f2000/issues",
   "iot_class": "local_polling",
   "requirements": [
     "bleak>=0.21.1",
