@@ -201,7 +201,8 @@ class ExplorationConsole:
             print("19. Screen Timeout 1m (Preset)")
             print("20. Screen Timeout 5m (Preset)")
             print("21. Screen Timeout 30m (Preset)")
-            print("22. Back to Main Menu")
+            print("22. AC Recharging Power Limit (Custom)")
+            print("23. Back to Main Menu")
             choice = input("Select preset: ").strip()
 
             if choice == "1":
@@ -304,6 +305,20 @@ class ExplorationConsole:
                 )
                 await self.send_payload(packet)
             elif choice == "22":
+                # AC Recharging Power Limit (Cmd: 0x80, Payload: uint16 LE Watts)
+                try:
+                    watts = int(input("Enter Recharging Power (200 - 2200 Watts): ").strip())
+                    if not (200 <= watts <= 2200):
+                        print("Error: Value must be between 200 and 2200 Watts.")
+                        continue
+                    payload = watts.to_bytes(2, byteorder="little")
+                    packet = build_unencrypted_packet(
+                        bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x80, payload
+                    )
+                    await self.send_payload(packet)
+                except ValueError:
+                    print("Error: Invalid numeric input.")
+            elif choice == "23":
                 break
 
     async def test_encrypted_solixble(self) -> None:
