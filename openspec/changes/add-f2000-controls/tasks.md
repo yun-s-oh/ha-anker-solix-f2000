@@ -13,9 +13,9 @@
 - [x] 1.4.5 Test Screen Timeout commands (20s, 30s, 1m, 5m, 30m) and validate State ACK updates
 - [x] 1.4.6 Test Screen Brightness adjustment commands and validate State ACK updates
 - [x] 1.4.7 Test AC Recharging Power Limit commands (200W - 2200W) and validate State ACK updates
-- [x] 1.4.8 Verify unencrypted AC Output end time commands and validate State ACK updates
-- [x] 1.4.9 Verify unencrypted DC Output end time commands and validate State ACK updates
-- [x] 1.4.10 Document finalized byte structures and ACK patterns in the Design Document
+- [ ] 1.4.8 Verify unencrypted AC Output end time commands and validate State ACK updates
+- [ ] 1.4.9 Verify unencrypted DC Output end time commands and validate State ACK updates
+- [ ] 1.4.10 Document finalized byte structures and ACK patterns in the Design Document
 
 ## 2. Core Home Assistant Controls Integration
 
