@@ -100,7 +100,8 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | **USB-A Port 2 Power** | `usb_a2_w` | `power` | `W` | None | Load consumed by USB-A Port 2 |
 | **12V Car Port 1 Power** | `dc_12v_port1_w` | `power` | `W` | None | Load consumed by Car Port 1 |
 | **12V Car Port 2 Power** | `dc_12v_port2_w` | `power` | `W` | None | Load consumed by Car Port 2 |
-| **12V Car Port 1 Timer** | `dc_12v_port1_timer` | `duration` | `s` | None | Configured timer remaining |
+| **12V Car Port Timer** | `dc_12v_port1_timer` | `duration` | `s` | None | Car port timer |
+| **AC Sockets Timer** | `ac_outlet_timer` | `duration` | `s` | None | AC sockets timer |
 
 ### Binary Sensor Platform (`binary_sensor`)
 
@@ -120,7 +121,7 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | Entity Name | Key | Icon | Category | Description |
 |---|---|---|---|---|
 | **AC Sockets Master** | `ac_outlet_on` | `mdi:power-socket-us` | None | Controls AC outlets |
-| **12V Car Port Master** | `twelve_volt_on` | `mdi:car-connector` | None | Controls DC 12V car port |
+| **12V Car Port Master** | `twelve_volt_on` | `mdi:car-electric` | None | Controls 12V port |
 | **Power Saving Mode** | `power_save_on` | `mdi:sprout` | None | Toggles Power Saving mode |
 
 ### Select Platform (`select`)
@@ -130,8 +131,8 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | **LED Light Brightness** | `led_state` | OFF, LOW, MID, HIGH, SOS | `mdi:led-on` | LED brightness level |
 | **Screen Brightness** | `screen_brightness` | Low, Mid, High, Max | `mdi:brightness-6` | LCD brightness |
 | **Screen Timeout** | `screen_timeout` | 20s, 30s, 1m, 5m, 30m | `mdi:progress-clock` | LCD screen timeout |
-| **AC Shutdown Timer** | `ac_outlet_timer` | Disabled, 5m-23h55m | `mdi:timer-outline` | AC shutdown timer |
-| **DC Shutdown Timer** | `dc_12v_port1_timer` | Disabled, 5m-23h55m | `mdi:timer-outline` | DC shutdown timer |
+| **AC Shutdown Timer** | `ac_outlet_timer` | Disabled, 5m-18h | `mdi:timer-outline` | AC timer |
+| **DC Shutdown Timer** | `dc_12v_port1_timer` | Disabled, 5m-18h | `mdi:timer-outline` | DC timer |
 
 ### Number Platform (`number`)
 

@@ -9,8 +9,9 @@ Welcome to the Anker Solix F2000 (PowerHouse 767) Home Assistant BLE Custom Inte
 ```text
 ├── .agent/                    # Specialized agent workflow definitions and skills
 ├── openspec/                  # OpenSpec change directories, design docs, and specs
-│   ├── changes/               # Active development changes
-│   │   └── anker-solix-ble-hacs/
+│   ├── changes/               # Development changes
+│   │   ├── archive/           # Archived past changes
+│   │   └── <change-name>/     # Active change (e.g. f2000-sensors-and-ci-refinement)
 │   │       ├── proposal.md    # Product goals, impact, and capabilities
 │   │       ├── design.md      # Architecture, coordinator strategy, and risks
 │   │       ├── tasks.md       # Implementation task checklists
@@ -43,7 +44,10 @@ All packets exchanged on `7777`/`8888` follow standard formats. Outbound control
 The final byte of every packet contains a checksum computed as:
 $$\text{Checksum} = \sum(\text{all preceding bytes}) \ \& \ 0\text{xFF}$$
 
-For detailed packet layouts, see [ble-protocol/spec.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/openspec/changes/anker-solix-ble-hacs/specs/ble-protocol/spec.md).
+For detailed packet layouts, see the archived
+[ble-protocol/spec.md][ble_spec].
+
+[ble_spec]: openspec/changes/archive/2026-05-30-anker-solix-ble-hacs/specs/ble-protocol/spec.md
 
 ---
 
