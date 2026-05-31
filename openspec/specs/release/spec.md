@@ -11,13 +11,28 @@ The integration manifest file `manifest.json` SHALL contain the correct reposito
 - **THEN** it resolves the documentation URL to the correct repository.
 
 ### Requirement: Automated Version release on Push
-The GitHub Actions release workflow SHALL trigger upon any push to the `main` branch. The workflow SHALL use `anothrNick/github-tag-action@1.64.0` (or similar) to automatically determine the next version: a commit containing `feat` SHALL trigger a minor version update, while any other commit SHALL trigger a patch version update. The workflow SHALL then automatically update the `"version"` field in `manifest.json` with the new version, commit and push it back to `main` (using `[skip ci]` to prevent recursive workflow runs), and publish the corresponding Git tag and GitHub Release with auto-generated release notes.
+The GitHub Actions release workflow SHALL trigger upon any push to the `main` branch. The workflow SHALL
+automatically determine the next version bump dynamically:
+- A commit message containing `major` or `breaking` keyword SHALL trigger a **major** version update.
+- A commit message containing `feat` keyword SHALL trigger a **minor** version update.
+- Any other commit SHALL trigger a **patch** version update.
+
+The workflow SHALL then automatically update the `"version"` field in `manifest.json` with the new version, commit
+and push it back to `main` (using `[skip ci]` to prevent recursive workflow runs), and publish the corresponding
+Git tag and GitHub Release with auto-generated release notes.
+
+#### Scenario: Workflow detects major/breaking commit and updates major version
+- **WHEN** a commit containing `major` or `breaking` is pushed to the `main` branch
+- **THEN** the workflow calculates a major version bump, writes it to `manifest.json`, commits and tags it,
+  and publishes a new release.
 
 #### Scenario: Workflow detects feat commit and updates minor version
-- **WHEN** a commit starting with `feat:` is pushed to the `main` branch
-- **THEN** the workflow calculates a minor version bump, writes it to `manifest.json`, commits and tags it, and publishes a new release.
+- **WHEN** a commit containing `feat` is pushed to the `main` branch
+- **THEN** the workflow calculates a minor version bump, writes it to `manifest.json`, commits and tags it,
+  and publishes a new release.
 
-#### Scenario: Workflow detects non-feat commit and updates patch version
-- **WHEN** a regular commit or fix is pushed to the `main` branch
-- **THEN** the workflow calculates a patch version bump, writes it to `manifest.json`, commits and tags it, and publishes a new release.
+#### Scenario: Workflow detects other commit and updates patch version
+- **WHEN** any other commit is pushed to the `main` branch
+- **THEN** the workflow calculates a patch version bump, writes it to `manifest.json`, commits and tags it,
+  and publishes a new release.
 
