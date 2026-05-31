@@ -8,11 +8,11 @@
 
 - [x] 1.4.1 Verify unencrypted AC Output Toggle commands and validate State ACK updates
 - [x] 1.4.2 Verify unencrypted DC Output Toggle commands and validate State ACK updates
-- [ ] 1.4.3 Verify unencrypted Power Saving Mode toggle commands and validate State ACK updates
-- [ ] 1.4.4 Test LED Brightness level commands (Off, Low, Mid, High, SOS) and validate State ACK updates
-- [ ] 1.4.5 Test Screen Timeout commands (20s, 30s, 1m, 5m, 30m) and validate State ACK updates
-- [ ] 1.4.6 Test Screen Brightness adjustment commands and validate State ACK updates
-- [ ] 1.4.7 Test AC Recharging Power Limit commands (200W - 2200W) and validate State ACK updates
+- [ ] 1.4.3 Verify unencrypted Power Saving Mode toggle commands
+- [ ] 1.4.4 Test LED Brightness level commands (Off, Low, Mid, High, SOS)
+- [ ] 1.4.5 Test Screen Timeout commands (20s, 30s, 1m, 5m, 30m)
+- [ ] 1.4.6 Test Screen Brightness adjustment commands
+- [ ] 1.4.7 Test AC Recharging Power Limit commands (200W - 2200W)
 - [ ] 1.4.8 Document finalized byte structures and ACK patterns in the Design Document
 
 ## 2. Core Home Assistant Controls Integration
