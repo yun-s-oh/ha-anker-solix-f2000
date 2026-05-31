@@ -15,15 +15,19 @@ The Home Assistant integration SHALL implement a `config_flow` allowing the user
 - **THEN** Home Assistant prompts the user to manually enter the Bluetooth MAC address, validates its format, and registers the device.
 
 ### Requirement: Unified Data Update Coordinator
-The integration SHALL utilize a single `DataUpdateCoordinator` to manage active polling and passive notification parsing, avoiding redundant GATT queries. The active polling interval SHALL be configurable by the user via an options flow between 5 and 30 seconds, defaulting to 5 seconds.
+The integration SHALL utilize a single `DataUpdateCoordinator` to manage active polling and passive
+notification parsing, avoiding redundant GATT queries. The active polling interval SHALL be
+configurable by the user via an options flow between 5 and 300 seconds, defaulting to 30 seconds.
 
 #### Scenario: Concurrent sensor updates
 - **WHEN** a telemetry notification is received by the coordinator
-- **THEN** all associated sensor entities (battery level, AC output, DC output) update their state in Home Assistant simultaneously without issuing new Bluetooth requests.
+- **THEN** all associated sensor entities (battery level, AC output, DC output) update their
+  state in Home Assistant simultaneously without issuing new Bluetooth requests.
 
 #### Scenario: User changes default poll interval in options flow
-- **WHEN** the user changes the default poll interval option to 10 seconds and clicks save
-- **THEN** the DataUpdateCoordinator instantly updates its update interval to 10 seconds without restarting the integration.
+- **WHEN** the user changes the default poll interval option to 60 seconds and clicks save
+- **THEN** the DataUpdateCoordinator instantly updates its update interval to 60 seconds without
+  restarting the integration.
 
 ### Requirement: Standardized Sensor and Binary Sensor Entities
 The integration SHALL expose comprehensive telemetry as native Home Assistant sensor and binary sensor entities with appropriate device classes and units. Both the internal battery capacity and external battery expansion capacity metrics SHALL be exposed as first-class standard sensor entities without diagnostic categorization to ensure they are visible in primary Home Assistant dashboards.
@@ -65,11 +69,25 @@ The primary battery sensor `total_pct` SHALL be registered with the name `"Batte
 - **THEN** the entity `sensor.<device_name>_battery` is successfully created with name `"Battery"`, and the sub-pack battery sensors remain diagnostic.
 
 ### Requirement: Config Flow Options Setup
-The manual configuration flow step SHALL prompt the user for the MAC Address, Integration Name, Active Telemetry Polling Rate, and Maximum Reconnection Back-Off Limit. 
+The configuration flow SHALL prompt the user for the MAC Address (for manual setups), Integration
+Name, Active Telemetry Polling Rate (5s to 300s), and Maximum Reconnection Back-Off Limit
+(30s to 600s). The flow SHALL enforce that the Maximum Reconnection Back-Off Limit is greater
+than or equal to the Active Telemetry Polling Rate. These polling options SHALL be available in
+both the manual setup flow and the automatic discovery flow steps, as well as the post-setup
+options flow.
 
-#### Scenario: Submitting manual configuration setup options
-- **WHEN** the user inputs a valid MAC Address, Name, Polling Interval, and Max Retry limit in the setup step
-- **THEN** the config entry is created, and the parameters are stored in `entry.options` instantly.
+#### Scenario: Submitting manual configuration setup options with valid parameters
+- **WHEN** the user inputs a manual setup with poll_interval=30 and max_retry_interval=60
+- **THEN** the setup succeeds, the config entry is created, and parameters are stored in options.
+
+#### Scenario: Submitting automatic discovery setup options with valid parameters
+- **WHEN** the user completes discovery setup with poll_interval=30 and max_retry_interval=60
+- **THEN** the setup succeeds, the config entry is created, and parameters are stored in options.
+
+#### Scenario: Submitting setup options with invalid retry interval
+- **WHEN** the user sets poll_interval=60 and max_retry_interval=30 in any setup step
+- **THEN** validation fails, and the flow presents an error indicating the retry interval must be
+  greater than or equal to the polling interval.
 
 ### Requirement: AC Sockets Timer Remaining Entity
 The integration SHALL expose the remaining AC outlet shutdown duration in seconds as a standard Home
