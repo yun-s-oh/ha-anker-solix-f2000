@@ -131,17 +131,8 @@ def parse_telemetry(data: bytes) -> dict[str, Any]:
         "dc_12v_port1_on": bool(data[80]),
         "dc_12v_port1_w": extract16(data, 33),
         "dc_12v_port1_timer": extract16(data, 13),
-        "ac_outlet_timer": extract16(data, 9),
         "dc_12v_port2_on": bool(data[81]),
         "dc_12v_port2_w": extract16(data, 35),
-    }
-
-
-def parse_aux_state(data: bytes) -> dict[str, Any]:
-    """Decode a 122-byte Auxiliary State (0x01 subtype) packet."""
-    return {
-        "ac_recharging_power": extract16(data, 101),
-        "screen_timeout": extract16(data, 105),
     }
 
 
@@ -163,14 +154,7 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
         self._connect_lock = asyncio.Lock()
         self._running = False
         self._retry_delay = MIN_RETRY_INTERVAL
-        self._state_data: dict[str, Any] = {
-            "ac_outlet_timer": 0,
-            "dc_12v_port1_timer": 0,
-            "led_state": "OFF",
-            "screen_brightness": 1,
-            "screen_timeout": 30,
-            "ac_recharging_power": 500,
-        }
+        self._state_data: dict[str, Any] = {}
 
         poll_interval = self.config_entry.options.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
 
@@ -209,10 +193,6 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                 self.async_set_updated_data(dict(self._state_data))
             elif sub_type == 0x49 and len(frame) >= 102:
                 parsed = parse_telemetry(frame)
-                self._state_data.update(parsed)
-                self.async_set_updated_data(dict(self._state_data))
-            elif sub_type == 0x01 and len(frame) == 122:
-                parsed = parse_aux_state(frame)
                 self._state_data.update(parsed)
                 self.async_set_updated_data(dict(self._state_data))
 
@@ -324,69 +304,3 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                     except BleakError as err:
                         _LOGGER.warning("Error during BLE client disconnect shutdown: %s", err)
                 self._client = None
-
-    async def async_send_control_command(self, cmd_id: int, payload: bytes) -> bool:
-        """Send a control command to the F2000 and wait for its ACK."""
-        if not self._client or not self._client.is_connected:
-            _LOGGER.warning("Cannot send control command: BLE not connected")
-            return False
-
-        # Build unencrypted packet
-        packet = bytearray()
-        packet.extend(bytes([0x08, 0xEE, 0x00, 0x00, 0x00]))
-        packet.append(0x02)  # PacketType: Command/Control
-        packet.append(cmd_id)
-        # Length: header (5) + type (1) + cmd_id (1) + len_bytes (2) + payload + checksum (1)
-        total_len = 5 + 1 + 1 + 2 + len(payload) + 1
-        packet.extend(total_len.to_bytes(2, byteorder="little"))
-        packet.extend(payload)
-        packet.append(sum(packet) & 0xFF)
-        packet_bytes = bytes(packet)
-
-        try:
-            _LOGGER.info("Sending BLE command 0x%02X, payload %s", cmd_id, payload.hex())
-            async with self._connect_lock:
-                await self._client.write_gatt_char(WRITE_UUID, packet_bytes, response=False)
-
-            # Optimistically update local state cache for instant UI feedback
-            if cmd_id == 0x86:
-                self._state_data["ac_outlet_on"] = bool(payload[0])
-            elif cmd_id == 0x87:
-                self._state_data["twelve_volt_on"] = bool(payload[0])
-            elif cmd_id == 0x8A:
-                self._state_data["power_save_on"] = bool(payload[0])
-            elif cmd_id == 0x8B:
-                try:
-                    self._state_data["led_state"] = LedState(payload[0]).name
-                except ValueError:
-                    pass
-            elif cmd_id == 0x88:
-                self._state_data["screen_brightness"] = int(payload[0])
-            elif cmd_id == 0x82:
-                self._state_data["screen_timeout"] = int.from_bytes(payload, byteorder="little")
-            elif cmd_id == 0x80:
-                self._state_data["ac_recharging_power"] = int.from_bytes(
-                    payload, byteorder="little"
-                )
-            elif cmd_id == 0x02:
-                self._state_data["ac_outlet_timer"] = int.from_bytes(
-                    payload, byteorder="little"
-                )
-            elif cmd_id == 0x03:
-                self._state_data["dc_12v_port1_timer"] = int.from_bytes(
-                    payload, byteorder="little"
-                )
-
-            self.async_set_updated_data(dict(self._state_data))
-
-            # Schedule a deferred active query refresh to fetch official telemetry 0.5s later
-            self.hass.async_create_task(self._async_deferred_refresh())
-            return True
-        except BleakError as err:
-            _LOGGER.error("Failed to send BLE command 0x%02X: %s", cmd_id, err)
-            return False
-
-    async def _async_deferred_refresh(self) -> None:
-        """Query telemetry after a 0.5s delay to refresh all states cleanly."""
-        await asyncio.sleep(0.5)
-        await self._async_write_query()
