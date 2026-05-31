@@ -30,6 +30,33 @@ jobs:
             echo "Bump type determined as: patch"
           fi
 
+      - name: Calculate next Git Tag (Dry-Run)
+        id: dry_run_tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: ${{ steps.bump_type.outputs.bump }}
+          WITH_V: true
+          DRY_RUN: true
+
+      - name: Update manifest.json version
+        run: |
+          NEW_TAG="${{ steps.dry_run_tag.outputs.new_tag }}"
+          NEW_VERSION="${NEW_TAG#v}"
+          echo "Updating manifest.json to version $NEW_VERSION"
+          MANIFEST="custom_components/anker_solix_f2000/manifest.json"
+          jq --arg ver "$NEW_VERSION" '.version = $ver' "$MANIFEST" > temp.json
+          mv temp.json "$MANIFEST"
+
+      - name: Commit and push updated manifest
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add custom_components/anker_solix_f2000/manifest.json
+          TAG="${{ steps.dry_run_tag.outputs.new_tag }}"
+          git commit -m "chore(release): update manifest.json to $TAG [skip ci]"
+          git push origin main
+
       - name: Create and push Git Tag
         id: create_tag
         uses: anothrNick/github-tag-action@1.64.0
@@ -37,21 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: ${{ steps.bump_type.outputs.bump }}
           WITH_V: true
-
-      - name: Update manifest.json version
-        run: |
-          NEW_TAG="${{ steps.create_tag.outputs.new_tag }}"
-          NEW_VERSION="${NEW_TAG#v}"
-          echo "Updating manifest.json to version $NEW_VERSION"
-          jq --arg ver "$NEW_VERSION" '.version = $ver' custom_components/anker_solix_f2000/manifest.json > temp.json && mv temp.json custom_components/anker_solix_f2000/manifest.json
-
-      - name: Commit and push updated manifest
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add custom_components/anker_solix_f2000/manifest.json
-          git commit -m "chore(release): update manifest.json to ${{ steps.create_tag.outputs.new_tag }} [skip ci]" && git push origin main || echo "No changes to commit"
-
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2

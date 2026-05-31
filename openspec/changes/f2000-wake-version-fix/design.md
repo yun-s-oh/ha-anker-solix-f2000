@@ -9,9 +9,8 @@ misalignment under HACS.
 ## Goals / Non-Goals
 
 **Goals:**
-- Implement a "DC Keep-Awake" configuration switch that automatically toggles the DC 12V port
-  ON when AC is OFF and the unit is not charging, keeping the BLE radio active at virtually 0W
-  drain.
+- Establish the active BLE keep-alive heartbeat polling via persistent local GATT connection,
+  preventing the BLE radio and CPU from entering deep standby mode.
 - Align the GitHub Actions release workflow so that the Git tag is pushed *after* the updated
   `manifest.json` is committed to the main branch.
 
@@ -21,13 +20,12 @@ misalignment under HACS.
 
 ## Decisions
 
-### Decision 1: Use DC 12V Keep-Awake Workaround
+### Decision 1: Use Active BLE Interrogation Heartbeat
 - **Options Considered**:
-  - Option A: Toggle AC Output ON to keep the unit awake (high idle power draw: 15W–20W).
-  - Option B: Toggle DC 12V Output ON (virtually 0W idle power draw).
+  - Option A: Toggle physical ports/sensors ON to keep CPU active (port toggling tested as non-viable).
+  - Option B: Maintain an active persistent GATT connection with periodic query heartbeats (mimicking an active app session).
 - **Decision**: Option B.
-- **Rationale**: Toggling the DC 12V outlet keeps the F2000's internal CPU and BLE radio active
-  indefinitely while consuming almost no energy when no load is attached.
+- **Rationale**: Maintaining the BLE connection and sending a query every few seconds serves as an active heartbeat that keeps the F2000 awake natively, without needing to manipulate physical power ports or waste idle energy.
 
 ### Decision 2: Run CI Tag Bump in Dry-Run First
 - **Options Considered**:
@@ -39,7 +37,5 @@ misalignment under HACS.
 
 ## Risks / Trade-offs
 
-- **[Risk] User toggles DC off manually**: If the user manually toggles the DC port off, the
-  device will eventually enter standby.
-  - *Mitigation*: If "DC Keep-Awake" is enabled in HASS, the coordinator will automatically
-    re-dispatch a DC ON command when the AC port is toggled off and the device is idle.
+- **[Risk] Bluetooth timeout during restarts**: If Home Assistant restarts or BLE adapter goes offline, the persistent connection is severed. After 12 hours of absolute silence, the F2000 shuts down its BLE radio entirely.
+  - *Mitigation*: Users who experience long downtimes can turn **Power Saving Mode OFF** on the F2000 (either physically or via HASS switch entity). This permanently overrides the auto-standby power rules, keeping the BLE radio broadcasting indefinitely.
