@@ -63,8 +63,23 @@ git push -u origin <branch-name> --force
 ```
 
 ### 5. Submit/Update Pull Request
-Go to the repository on GitHub, create a Pull Request, and fill in the PR details using the
-generated PR message template.
+Go to the repository on GitHub, create a Pull Request, and fill in the PR details. The agent or
+developer should print out a brief, professional PR message containing a summary of the changes
+and the verification results to easily copy-paste into GitHub.
+
+#### PR Message Structure:
+```text
+Title: <Conventional PR Title, e.g. docs(workflow): create safe push workflow>
+
+## Description
+- <Brief bullet point detailing the first major change>
+- <Brief bullet point detailing the second major change>
+
+## Verification Results
+- [x] flake8 style checks passed
+- [x] py_compile syntax checks passed
+- [x] pytest unit tests passed
+```
 
 ---
 
@@ -89,6 +104,18 @@ Running: git fetch origin && git rebase origin/main
 ### Step 4: Pushing to remote repository
 Running: git push origin feature/f2000-wake-version-fix --force-with-lease
 ✓ Successfully pushed to origin/feature/f2000-wake-version-fix!
+
+### Step 5: Suggested Pull Request Message
+Title: docs(workflow): create safe push workflow
+
+## Description
+- Created .agent/workflows/opsx-push.md for safe git push instructions
+- Outlined rebase and flake8/pytest validation steps
+
+## Verification Results
+- [x] flake8 style checks passed
+- [x] py_compile syntax checks passed
+- [x] pytest unit tests passed
 
 ✓ Push complete!
 ```
