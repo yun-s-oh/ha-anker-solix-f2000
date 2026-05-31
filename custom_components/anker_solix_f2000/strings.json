@@ -17,10 +17,20 @@
           "poll_interval": "Active Telemetry Polling Interval (seconds)",
           "max_retry_interval": "Maximum Reconnection Back-Off Limit (seconds)"
         }
+      },
+      "confirm": {
+        "title": "Discovery Settings",
+        "description": "Configure the telemetry polling and retry intervals for your discovered device.",
+        "data": {
+          "name": "Integration Name",
+          "poll_interval": "Active Telemetry Polling Interval (seconds)",
+          "max_retry_interval": "Maximum Reconnection Back-Off Limit (seconds)"
+        }
       }
     },
     "error": {
-      "invalid_mac": "The entered MAC address format is invalid. Please format as XX:XX:XX:XX:XX:XX."
+      "invalid_mac": "The entered MAC address format is invalid. Please format as XX:XX:XX:XX:XX:XX.",
+      "retry_interval_too_low": "Reconnection retry delay must be >= active polling rate."
     }
   },
   "options": {
@@ -33,6 +43,9 @@
           "max_retry_interval": "Maximum Reconnection Back-Off Limit (seconds)"
         }
       }
+    },
+    "error": {
+      "retry_interval_too_low": "Reconnection retry delay must be >= active polling rate."
     }
   }
 }
