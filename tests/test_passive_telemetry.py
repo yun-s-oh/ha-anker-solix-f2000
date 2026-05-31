@@ -402,10 +402,11 @@ async def main() -> None:
         devices = await BleakScanner.discover(timeout=10)
         found = []
         for dev in devices:
-            if dev.name:
-                terms = ["767", "powerhouse", "f2000", "anker", "a1780", "solix"]
-                if any(term in dev.name.lower() for term in terms):
-                    found.append(dev)
+            if dev.name and any(
+                term in dev.name
+                for term in ["767", "PowerHouse", "F2000", "Anker"]
+            ):
+                found.append(dev)
                 logger.info("  Found: %s (%s)", dev.name, dev.address)
 
         if not found:

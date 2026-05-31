@@ -79,8 +79,7 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
 
         for info in discovered:
             name = info.name or ""
-            terms = ["767", "powerhouse", "f2000", "anker", "a1780", "solix"]
-            if any(term in name.lower() for term in terms):
+            if any(term in name for term in ["767", "PowerHouse", "F2000", "Anker"]):
                 self._discovered_devices[info.address] = name
                 device_options[info.address] = f"{name} ({info.address})"
 
@@ -108,11 +107,8 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
             poll_interval = user_input.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
             max_retry = user_input.get(CONF_MAX_RETRY_INTERVAL, MAX_RETRY_INTERVAL)
 
-            # Standard MAC format or macOS UUID format verification
-            is_valid_mac = len(address.split(":")) == 6
-            is_valid_uuid = len(address) == 36 and len(address.split("-")) == 5
-
-            if not (is_valid_mac or is_valid_uuid):
+            # Standard MAC format verification
+            if len(address.split(":")) != 6:
                 errors[CONF_ADDRESS] = "invalid_mac"
             else:
                 await self.async_set_unique_id(address)
