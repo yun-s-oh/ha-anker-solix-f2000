@@ -6,8 +6,8 @@
 
 ## 1.4 Standalone Controls Verification (Extensive Discovery)
 
-- [x] 1.4.1 Verify unencrypted AC Output Toggle commands and validate State ACK updates
-- [x] 1.4.2 Verify unencrypted DC Output Toggle commands and validate State ACK updates
+- [ ] 1.4.1 Verify unencrypted AC Output Toggle commands and validate State ACK updates
+- [ ] 1.4.2 Verify unencrypted DC Output Toggle commands and validate State ACK updates
 - [ ] 1.4.3 Verify unencrypted Power Saving Mode toggle commands
 - [ ] 1.4.4 Test LED Brightness level commands (Off, Low, Mid, High, SOS)
 - [ ] 1.4.5 Test Screen Timeout commands (20s, 30s, 1m, 5m, 30m)
