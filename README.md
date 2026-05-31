@@ -68,8 +68,8 @@ After installation, the integration can be configured during initial setup or cu
 |---|---|---|---|---|
 | **MAC Address** | `address` | XX:XX:XX:XX:XX:XX | N/A | Target physical BLE MAC address or macOS UUID |
 | **Integration Name** | `name` | String | `767_PowerHouse` | Friendly name for the device registry |
-| **Active Polling Rate** | `poll_interval` | `5` to `30` seconds | `5` | Active query telemetry poll frequency |
-| **Reconnection Delay** | `max_retry_interval` | `30` to `300` seconds | `30` | Maximum reconnection back-off ceiling |
+| **Active Polling Rate** | `poll_interval` | `5` to `300` seconds | `30` | Active query poll frequency |
+| **Reconnection Delay** | `max_retry_interval` | `30` to `600` seconds | `60` | Maximum retry limit |
 
 ---
 
