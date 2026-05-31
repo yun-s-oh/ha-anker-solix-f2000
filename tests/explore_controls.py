@@ -202,9 +202,7 @@ class ExplorationConsole:
             print("20. Screen Timeout 5m (Preset)")
             print("21. Screen Timeout 30m (Preset)")
             print("22. AC Recharging Power Limit (Custom)")
-            print("23. AC Output Timer (Custom)")
-            print("24. DC Output Timer (Custom)")
-            print("25. Back to Main Menu")
+            print("23. Back to Main Menu")
             choice = input("Select preset: ").strip()
 
             if choice == "1":
@@ -321,36 +319,6 @@ class ExplorationConsole:
                 except ValueError:
                     print("Error: Invalid numeric input.")
             elif choice == "23":
-                # AC Output Timer (Cmd: 0x02, Payload: uint16 LE seconds)
-                try:
-                    prompt = "Enter AC Timer (0 to disable, 5 to 1435 mins in 5-min steps): "
-                    minutes = int(input(prompt).strip())
-                    if minutes != 0 and (minutes < 5 or minutes > 1435 or minutes % 5 != 0):
-                        print("Error: Value must be 0 or multiple of 5 between 5 and 1435.")
-                        continue
-                    payload = (minutes * 60).to_bytes(2, byteorder="little")
-                    packet = build_unencrypted_packet(
-                        bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x02, payload
-                    )
-                    await self.send_payload(packet)
-                except ValueError:
-                    print("Error: Invalid numeric input.")
-            elif choice == "24":
-                # DC Output Timer (Cmd: 0x03, Payload: uint16 LE seconds)
-                try:
-                    prompt = "Enter DC Timer (0 to disable, 5 to 1435 mins in 5-min steps): "
-                    minutes = int(input(prompt).strip())
-                    if minutes != 0 and (minutes < 5 or minutes > 1435 or minutes % 5 != 0):
-                        print("Error: Value must be 0 or multiple of 5 between 5 and 1435.")
-                        continue
-                    payload = (minutes * 60).to_bytes(2, byteorder="little")
-                    packet = build_unencrypted_packet(
-                        bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x03, payload
-                    )
-                    await self.send_payload(packet)
-                except ValueError:
-                    print("Error: Invalid numeric input.")
-            elif choice == "25":
                 break
 
     async def test_encrypted_solixble(self) -> None:
