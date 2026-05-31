@@ -227,4 +227,11 @@ class AnkerSolixSensor(
         """Return the current telemetry value parsed from the BLE notification stream."""
         if self.coordinator.data is None:
             return None
+
+        # Smart fallback for primary Battery sensor
+        if self.entity_description.key == "total_pct":
+            ext_connected = self.coordinator.data.get("external_pct") is not None
+            if not ext_connected:
+                return self.coordinator.data.get("internal_pct")
+
         return self.coordinator.data.get(self.entity_description.key)

@@ -29,7 +29,7 @@ SWITCH_DESCRIPTIONS: list[SwitchEntityDescription] = [
     SwitchEntityDescription(
         key="twelve_volt_on",
         name="12V Car Port Master",
-        icon="mdi:car-connector",
+        icon="mdi:car-electric",
     ),
     SwitchEntityDescription(
         key="power_save_on",

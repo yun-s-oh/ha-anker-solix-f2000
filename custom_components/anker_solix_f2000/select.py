@@ -52,9 +52,9 @@ def option_to_seconds(option: str) -> int:
     return 0
 
 
-# Pre-generate shutdown timer option list (5-minute intervals up to 23 hours 55 minutes)
+# Pre-generate shutdown timer option list (5-minute intervals up to 18 hours)
 TIMER_OPTIONS: list[str] = ["Disabled"]
-for minutes_count in range(5, 1440, 5):
+for minutes_count in range(5, 1085, 5):
     TIMER_OPTIONS.append(seconds_to_option(minutes_count * 60))
 
 # Mappings for Screen Timeout (20s, 30s, 1m, 5m, 30m)
