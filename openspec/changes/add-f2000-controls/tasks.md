@@ -19,12 +19,12 @@
 
 ## 2. Core Home Assistant Controls Integration
 
-- [ ] 2.1 Add `switch.py` exposing AC Output, DC Output, and Power Saving Mode
-- [ ] 2.2 Add `select.py` exposing LED Brightness, Screen Brightness, Screen Timeout, and AC/DC Output end timers
-- [ ] 2.3 Add `number.py` exposing AC Recharging Power limit
-- [ ] 2.4 Update HASS setup registration under `__init__.py` to load new control platforms
+- [x] 2.1 Add `switch.py` exposing AC Output, DC Output, and Power Saving Mode
+- [x] 2.2 Add `select.py` exposing LED Brightness, Screen Brightness, Screen Timeout, and AC/DC Output end timers
+- [x] 2.3 Add `number.py` exposing AC Recharging Power limit
+- [x] 2.4 Update HASS setup registration under `__init__.py` to load new control platforms
 
 ## 3. Documentation & Verification
 
-- [ ] 3.1 Update `README.md` to document control entities and test scripts
-- [ ] 3.2 Verify all changes compile and pass validation tests
+- [x] 3.1 Update `README.md` to document control entities and test scripts
+- [x] 3.2 Verify all changes compile and pass validation tests

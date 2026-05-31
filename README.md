@@ -115,6 +115,30 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | **USB-A Port 1 Switch State** | `usb_a1_on` | `running` | None | `True` when USB-A Port 1 is active |
 | **USB-A Port 2 Switch State** | `usb_a2_on` | `running` | None | `True` when USB-A Port 2 is active |
 
+### Switch Platform (`switch`)
+
+| Entity Name | Key | Icon | Category | Description |
+|---|---|---|---|---|
+| **AC Sockets Master** | `ac_outlet_on` | `mdi:power-socket-us` | None | Controls AC outlets |
+| **12V Car Port Master** | `twelve_volt_on` | `mdi:car-connector` | None | Controls DC 12V car port |
+| **Power Saving Mode** | `power_save_on` | `mdi:sprout` | None | Toggles Power Saving mode |
+
+### Select Platform (`select`)
+
+| Entity Name | Key | Options | Icon | Description |
+|---|---|---|---|---|
+| **LED Light Brightness** | `led_state` | OFF, LOW, MID, HIGH, SOS | `mdi:led-on` | LED brightness level |
+| **Screen Brightness** | `screen_brightness` | Low, Mid, High, Max | `mdi:brightness-6` | LCD brightness |
+| **Screen Timeout** | `screen_timeout` | 20s, 30s, 1m, 5m, 30m | `mdi:progress-clock` | LCD screen timeout |
+| **AC Shutdown Timer** | `ac_outlet_timer` | Disabled, 5m-23h55m | `mdi:timer-outline` | AC shutdown timer |
+| **DC Shutdown Timer** | `dc_12v_port1_timer` | Disabled, 5m-23h55m | `mdi:timer-outline` | DC shutdown timer |
+
+### Number Platform (`number`)
+
+| Entity Name | Key | Range / Step | Unit | Description |
+|---|---|---|---|---|
+| **AC Recharge Limit** | `ac_recharging_power` | 200-2200 / 100 | W | AC charge limit |
+
 ---
 
 ## 🧪 Standalone CLI Verification & Testing Suite
@@ -148,6 +172,12 @@ ANKER_DEVICE_NAME=767_PowerHouse
 
 ### 3. Run CLI Scripts
 Ensure your Python virtual environment is active (`source tests/venv/bin/activate`) before running the scripts.
+
+* **Interactive Control Console**: Explore and test unencrypted BLE controls
+  (switches, selects, recharging power sliders) interactively:
+  ```bash
+  tests/venv/bin/python tests/explore_controls.py
+  ```
 
 * **Scan & Auto-Configure**: Scan for nearby F2000 devices and auto-write MAC parameters directly to your root `.env` file:
   ```bash
