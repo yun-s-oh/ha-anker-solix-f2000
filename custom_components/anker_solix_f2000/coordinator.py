@@ -193,6 +193,7 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
     def _notification_handler(self, _sender: int, data: bytearray) -> None:
         """Handle incoming unencrypted BLE notification frames."""
         frame = bytes(data)
+        _LOGGER.debug("Received BLE notification frame (%d bytes): %s", len(frame), frame.hex())
         if len(frame) < 10:
             return
 
@@ -213,8 +214,11 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                 self._state_data.update(parsed)
                 self.async_set_updated_data(dict(self._state_data))
             elif sub_type == 0x01 and len(frame) == 122:
-                parsed = parse_aux_state(frame)
-                self._state_data.update(parsed)
+                # 122-byte auxiliary state packet contains both telemetry and aux state
+                parsed_telemetry = parse_telemetry(frame)
+                parsed_aux = parse_aux_state(frame)
+                self._state_data.update(parsed_telemetry)
+                self._state_data.update(parsed_aux)
                 self.async_set_updated_data(dict(self._state_data))
 
     async def _async_connect(self) -> bool:
