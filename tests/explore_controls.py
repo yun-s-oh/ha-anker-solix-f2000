@@ -65,16 +65,6 @@ def build_unencrypted_packet(
     return bytes(packet)
 
 
-def build_f2000_control_packet(cmd_id: int, value: int) -> bytes:
-    """Build a complete unencrypted command packet for Anker F2000 controls."""
-    return build_unencrypted_packet(
-        bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
-        0x02,
-        cmd_id,
-        bytes([value]),
-    )
-
-
 def parse_packet(data: bytes) -> str:
     """Introspect and parse key known packets to help with control exploration."""
     if len(data) < 10:
@@ -195,28 +185,58 @@ class ExplorationConsole:
                 packet = bytes([0x08, 0xEE, 0x00, 0x00, 0x00, 0x01, 0x01, 0x0A, 0x00, 0x02])
                 await self.send_payload(packet)
             elif choice == "2":
-                # AC ON preset (Cmd: 86, Value: 01)
-                packet = build_f2000_control_packet(0x86, 0x01)
+                # AC ON preset (Cmd: 4a, Payload ON)
+                packet = build_unencrypted_packet(
+                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
+                    0x01,
+                    0x4A,
+                    bytes.fromhex("a10121a2020101"),
+                )
                 await self.send_payload(packet)
             elif choice == "3":
-                # AC OFF preset (Cmd: 86, Value: 00)
-                packet = build_f2000_control_packet(0x86, 0x00)
+                # AC OFF preset (Cmd: 4a, Payload OFF)
+                packet = build_unencrypted_packet(
+                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
+                    0x01,
+                    0x4A,
+                    bytes.fromhex("a10121a2020100"),
+                )
                 await self.send_payload(packet)
             elif choice == "4":
-                # DC ON preset (Cmd: 87, Value: 01)
-                packet = build_f2000_control_packet(0x87, 0x01)
+                # DC ON preset (Cmd: 4b, Payload ON)
+                packet = build_unencrypted_packet(
+                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
+                    0x01,
+                    0x4B,
+                    bytes.fromhex("a10121a2020101"),
+                )
                 await self.send_payload(packet)
             elif choice == "5":
-                # DC OFF preset (Cmd: 87, Value: 00)
-                packet = build_f2000_control_packet(0x87, 0x00)
+                # DC OFF preset (Cmd: 4b, Payload OFF)
+                packet = build_unencrypted_packet(
+                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
+                    0x01,
+                    0x4B,
+                    bytes.fromhex("a10121a2020100"),
+                )
                 await self.send_payload(packet)
             elif choice == "6":
-                # LED SOS preset (Cmd: 8B, Value: 04)
-                packet = build_f2000_control_packet(0x8B, 0x04)
+                # LED SOS preset (Cmd: 4f, Payload SOS)
+                packet = build_unencrypted_packet(
+                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
+                    0x01,
+                    0x4F,
+                    bytes.fromhex("a10121a2020104"),
+                )
                 await self.send_payload(packet)
             elif choice == "7":
-                # LED OFF preset (Cmd: 8B, Value: 00)
-                packet = build_f2000_control_packet(0x8B, 0x00)
+                # LED OFF preset (Cmd: 4f, Payload OFF)
+                packet = build_unencrypted_packet(
+                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]),
+                    0x01,
+                    0x4F,
+                    bytes.fromhex("a10121a2020100"),
+                )
                 await self.send_payload(packet)
             elif choice == "8":
                 break
