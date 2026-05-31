@@ -119,7 +119,11 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 
 ## 🧪 Standalone CLI Verification & Testing Suite
 
-An isolated Python virtual environment is housed under `tests/` to safely query telemetry, probe peripheral structures, and execute unit tests completely independent of Home Assistant.
+An isolated Python virtual environment is housed under `tests/` to safely query
+telemetry, probe peripheral structures, and execute unit tests completely independent
+of Home Assistant. For detailed documentation on all available testing and validation
+scripts,
+see [tests/README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/tests/README.md).
 
 ### 1. Initialize Virtual Environment
 Navigate to the root directory and initialize the environment:
