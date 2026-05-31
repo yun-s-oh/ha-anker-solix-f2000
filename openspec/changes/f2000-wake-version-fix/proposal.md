@@ -8,10 +8,10 @@ Additionally, the GitHub Actions release workflow pushes the new Git tag before 
 
 ## What Changes
 
-- **Automatic DC Keep-Awake Mechanism**: Investigate and implement an automatic "DC Keep-Awake"
-  switch in HASS. Toggling the DC 12V output (car socket) ON keeps the unit's CPU and BLE radio
-  active indefinitely. Unlike the AC inverter (which has a 15W–20W idle drain), the DC 12V rail
-  draws virtually 0W when idle, making it a highly efficient keep-awake channel.
+- **Active BLE Interrogation Heartbeat**: Keep the physical BLE radio and CPU active using
+  an active local GATT connection and periodic unencrypted telemetry queries. Constant
+  communication serves as a keep-awake heartbeat, preventing the F2000 from entering
+  deep standby mode.
 - **GitHub Release Workflow Restructuring**: Refactor `.github/workflows/release.yaml` to run
   the tag-bump action in a dry-run mode first, extract the calculated next version, commit
   and push the updated `manifest.json` to the `main` branch, and then create the Git tag and
