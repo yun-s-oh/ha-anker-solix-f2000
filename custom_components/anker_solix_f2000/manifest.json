@@ -8,6 +8,20 @@
   "dependencies": [
     "bluetooth"
   ],
+  "bluetooth": [
+    {
+      "local_name": "767_PowerHouse*"
+    },
+    {
+      "local_name": "Anker*"
+    },
+    {
+      "local_name": "A1780*"
+    },
+    {
+      "local_name": "F2000*"
+    }
+  ],
   "documentation": "https://github.com/yun-s-oh/ha-anker-solix-f2000",
   "iot_class": "local_polling",
   "requirements": [

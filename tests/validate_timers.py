@@ -114,7 +114,12 @@ class TimersValidationSession:
             logger.warning("Direct find failed. Running fallback discovery scan...")
             devices = await BleakScanner.discover(timeout=5.0)
             for d in devices:
-                if d.address.upper() == self.mac.upper() or (d.name and "PowerHouse" in d.name):
+                match_addr = d.address.upper() == self.mac.upper()
+                match_name = d.name and any(
+                    t in d.name.lower()
+                    for t in ["767", "powerhouse", "f2000", "anker", "a1780", "solix"]
+                )
+                if match_addr or match_name:
                     device = d
                     break
 
