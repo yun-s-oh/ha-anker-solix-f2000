@@ -17,6 +17,7 @@ from bleak import BleakClient, BleakError
 from bleak.backends.device import BLEDevice
 from bleak_retry_connector import establish_connection
 
+from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -224,6 +225,13 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
 
             _LOGGER.debug("Connecting to Anker F2000 BLE at %s", self.device.address)
             try:
+                # Resolve fresh BLEDevice from the central HA Bluetooth subsystem
+                ble_device = bluetooth.async_ble_device_from_address(
+                    self.hass, self.device.address, connectable=True
+                )
+                if ble_device:
+                    self.device = ble_device
+
                 # establish_connection manages reconnection retries automatically
                 self._client = await establish_connection(
                     BleakClient,
