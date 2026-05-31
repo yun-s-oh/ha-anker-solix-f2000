@@ -192,11 +192,7 @@ class ExplorationConsole:
             print("10. LED Light HIGH (Preset)")
             print("11. Power Saving Mode ON (Preset)")
             print("12. Power Saving Mode OFF (Preset)")
-            print("13. Screen Brightness LOW (Preset)")
-            print("14. Screen Brightness MID (Preset)")
-            print("15. Screen Brightness HIGH (Preset)")
-            print("16. Screen Brightness MAX (Preset)")
-            print("17. Back to Main Menu")
+            print("13. Back to Main Menu")
             choice = input("Select preset: ").strip()
 
             if choice == "1":
@@ -248,22 +244,6 @@ class ExplorationConsole:
                 packet = build_f2000_control_packet(0x8A, 0x00)
                 await self.send_payload(packet)
             elif choice == "13":
-                # Screen Brightness LOW preset (Cmd: 88, Value: 00)
-                packet = build_f2000_control_packet(0x88, 0x00)
-                await self.send_payload(packet)
-            elif choice == "14":
-                # Screen Brightness MID preset (Cmd: 88, Value: 01)
-                packet = build_f2000_control_packet(0x88, 0x01)
-                await self.send_payload(packet)
-            elif choice == "15":
-                # Screen Brightness HIGH preset (Cmd: 88, Value: 02)
-                packet = build_f2000_control_packet(0x88, 0x02)
-                await self.send_payload(packet)
-            elif choice == "16":
-                # Screen Brightness MAX preset (Cmd: 88, Value: 03)
-                packet = build_f2000_control_packet(0x88, 0x03)
-                await self.send_payload(packet)
-            elif choice == "17":
                 break
 
     async def test_encrypted_solixble(self) -> None:
