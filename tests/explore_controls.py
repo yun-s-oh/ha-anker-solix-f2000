@@ -196,12 +196,7 @@ class ExplorationConsole:
             print("14. Screen Brightness MID (Preset)")
             print("15. Screen Brightness HIGH (Preset)")
             print("16. Screen Brightness MAX (Preset)")
-            print("17. Screen Timeout 20s (Preset)")
-            print("18. Screen Timeout 30s (Preset)")
-            print("19. Screen Timeout 1m (Preset)")
-            print("20. Screen Timeout 5m (Preset)")
-            print("21. Screen Timeout 30m (Preset)")
-            print("22. Back to Main Menu")
+            print("17. Back to Main Menu")
             choice = input("Select preset: ").strip()
 
             if choice == "1":
@@ -269,41 +264,6 @@ class ExplorationConsole:
                 packet = build_f2000_control_packet(0x88, 0x03)
                 await self.send_payload(packet)
             elif choice == "17":
-                # Screen Timeout 20s preset (Cmd: 0x82, Payload: uint16(20) LE)
-                payload = (20).to_bytes(2, byteorder="little")
-                packet = build_unencrypted_packet(
-                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x82, payload
-                )
-                await self.send_payload(packet)
-            elif choice == "18":
-                # Screen Timeout 30s preset (Cmd: 0x82, Payload: uint16(30) LE)
-                payload = (30).to_bytes(2, byteorder="little")
-                packet = build_unencrypted_packet(
-                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x82, payload
-                )
-                await self.send_payload(packet)
-            elif choice == "19":
-                # Screen Timeout 1m preset (Cmd: 0x82, Payload: uint16(60) LE)
-                payload = (60).to_bytes(2, byteorder="little")
-                packet = build_unencrypted_packet(
-                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x82, payload
-                )
-                await self.send_payload(packet)
-            elif choice == "20":
-                # Screen Timeout 5m preset (Cmd: 0x82, Payload: uint16(300) LE)
-                payload = (300).to_bytes(2, byteorder="little")
-                packet = build_unencrypted_packet(
-                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x82, payload
-                )
-                await self.send_payload(packet)
-            elif choice == "21":
-                # Screen Timeout 30m preset (Cmd: 0x82, Payload: uint16(1800) LE)
-                payload = (1800).to_bytes(2, byteorder="little")
-                packet = build_unencrypted_packet(
-                    bytes([0x08, 0xEE, 0x00, 0x00, 0x00]), 0x02, 0x82, payload
-                )
-                await self.send_payload(packet)
-            elif choice == "22":
                 break
 
     async def test_encrypted_solixble(self) -> None:
