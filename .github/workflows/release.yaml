@@ -22,7 +22,10 @@ jobs:
         id: bump_type
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
-          if echo "$COMMIT_MSG" | grep -iq "feat"; then
+          if echo "$COMMIT_MSG" | grep -iqE "major|breaking"; then
+            echo "bump=major" >> $GITHUB_OUTPUT
+            echo "Bump type determined as: major"
+          elif echo "$COMMIT_MSG" | grep -iq "feat"; then
             echo "bump=minor" >> $GITHUB_OUTPUT
             echo "Bump type determined as: minor"
           else
