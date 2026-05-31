@@ -160,7 +160,14 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     ),
     SensorEntityDescription(
         key="dc_12v_port1_timer",
-        name="12V Car Port 1 Timer Remaining",
+        name="12V Car Port Timer Remaining",
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        device_class=SensorDeviceClass.DURATION,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    SensorEntityDescription(
+        key="ac_outlet_timer",
+        name="AC Sockets Timer Remaining",
         native_unit_of_measurement=UnitOfTime.SECONDS,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
