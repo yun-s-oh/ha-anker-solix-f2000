@@ -24,6 +24,10 @@ from .const import (
     DEFAULT_POLL_INTERVAL,
     DOMAIN,
     MAX_RETRY_INTERVAL,
+    MIN_POLL_INTERVAL,
+    MAX_POLL_INTERVAL,
+    MIN_MAX_RETRY_INTERVAL,
+    MAX_MAX_RETRY_INTERVAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,6 +41,8 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._discovered_devices: dict[str, str] = {}
+        self._discovered_address: str = ""
+        self._discovered_name: str = ""
 
     @staticmethod
     @callback
@@ -64,14 +70,9 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
             await self.async_set_unique_id(selected_address)
             self._abort_if_unique_id_configured()
 
-            return self.async_create_entry(
-                title=name,
-                data={CONF_ADDRESS: selected_address, CONF_NAME: name},
-                options={
-                    CONF_POLL_INTERVAL: DEFAULT_POLL_INTERVAL,
-                    CONF_MAX_RETRY_INTERVAL: MAX_RETRY_INTERVAL,
-                },
-            )
+            self._discovered_address = selected_address
+            self._discovered_name = name
+            return await self.async_step_confirm()
 
         # Retrieve discovered BLE devices using HA's central Bluetooth scanner
         discovered = bluetooth.async_discovered_service_info(self.hass)
@@ -96,6 +97,60 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
             errors=errors,
         )
 
+    async def async_step_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Handle configuration flow step for confirmed discovered device."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            name = user_input[CONF_NAME].strip() or self._discovered_name
+            poll_interval = user_input[CONF_POLL_INTERVAL]
+            max_retry = user_input[CONF_MAX_RETRY_INTERVAL]
+
+            if max_retry < poll_interval:
+                errors["base"] = "retry_interval_too_low"
+            else:
+                return self.async_create_entry(
+                    title=name,
+                    data={
+                        CONF_ADDRESS: self._discovered_address,
+                        CONF_NAME: name,
+                    },
+                    options={
+                        CONF_POLL_INTERVAL: poll_interval,
+                        CONF_MAX_RETRY_INTERVAL: max_retry,
+                    },
+                )
+
+        return self.async_show_form(
+            step_id="confirm",
+            data_schema=vol.Schema({
+                vol.Optional(CONF_NAME, default=self._discovered_name): str,
+                vol.Required(
+                    CONF_POLL_INTERVAL, default=DEFAULT_POLL_INTERVAL
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=MIN_POLL_INTERVAL,
+                        max=MAX_POLL_INTERVAL,
+                        mode=selector.NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
+                vol.Required(
+                    CONF_MAX_RETRY_INTERVAL, default=MAX_RETRY_INTERVAL
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=MIN_MAX_RETRY_INTERVAL,
+                        max=MAX_MAX_RETRY_INTERVAL,
+                        mode=selector.NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
+            }),
+            errors=errors,
+        )
+
     async def async_step_manual(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
@@ -114,6 +169,8 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
 
             if not (is_valid_mac or is_valid_uuid):
                 errors[CONF_ADDRESS] = "invalid_mac"
+            elif max_retry < poll_interval:
+                errors["base"] = "retry_interval_too_low"
             else:
                 await self.async_set_unique_id(address)
                 self._abort_if_unique_id_configured()
@@ -136,8 +193,8 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
                     CONF_POLL_INTERVAL, default=DEFAULT_POLL_INTERVAL
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
-                        min=5,
-                        max=30,
+                        min=MIN_POLL_INTERVAL,
+                        max=MAX_POLL_INTERVAL,
                         mode=selector.NumberSelectorMode.BOX,
                         unit_of_measurement="s",
                     )
@@ -146,8 +203,8 @@ class AnkerSolixF2000ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # ty
                     CONF_MAX_RETRY_INTERVAL, default=MAX_RETRY_INTERVAL
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
-                        min=30,
-                        max=300,
+                        min=MIN_MAX_RETRY_INTERVAL,
+                        max=MAX_MAX_RETRY_INTERVAL,
                         mode=selector.NumberSelectorMode.BOX,
                         unit_of_measurement="s",
                     )
@@ -164,8 +221,16 @@ class AnkerSolixF2000OptionsFlowHandler(config_entries.OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
         """Manage the options."""
+        errors: dict[str, str] = {}
+
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            poll_interval = user_input[CONF_POLL_INTERVAL]
+            max_retry = user_input[CONF_MAX_RETRY_INTERVAL]
+
+            if max_retry < poll_interval:
+                errors["base"] = "retry_interval_too_low"
+            else:
+                return self.async_create_entry(title="", data=user_input)
 
         return self.async_show_form(
             step_id="init",
@@ -177,8 +242,8 @@ class AnkerSolixF2000OptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
-                        min=5,
-                        max=30,
+                        min=MIN_POLL_INTERVAL,
+                        max=MAX_POLL_INTERVAL,
                         mode=selector.NumberSelectorMode.BOX,
                         unit_of_measurement="s",
                     )
@@ -190,11 +255,12 @@ class AnkerSolixF2000OptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
-                        min=30,
-                        max=300,
+                        min=MIN_MAX_RETRY_INTERVAL,
+                        max=MAX_MAX_RETRY_INTERVAL,
                         mode=selector.NumberSelectorMode.BOX,
                         unit_of_measurement="s",
                     )
                 ),
             }),
+            errors=errors,
         )
