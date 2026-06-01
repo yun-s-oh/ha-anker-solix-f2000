@@ -95,12 +95,14 @@ tests/venv/bin/python tests/validate_recharge_power.py
 ## 🔬 Diagnostic & Utility Tools
 
 * **Passive Telemetry Streamer (`test_passive_telemetry.py`)**: Subscribes and parses real-time
-  telemetry data. Run with `--scan` to auto-discover nearby F2000 devices.
+  telemetry data. Run with `--scan` to auto-discover nearby F2000 devices, or add the `--raw` flag
+  to dump the raw hex byte grid side-by-side with the decoded metrics.
 * **GATT Service Dumper (`diagnose_gatt.py`)**: Discovers and logs physical BLE GATT services,
   descriptors, and properties.
 * **Heartbeat Verification (`test_heartbeat.py`)**: Tests unencrypted query keep-alive ping.
 * **Pytest Unit Tests (`test_mock_telemetry.py`)**: Offline verification of correct byte parsing,
-  scaling, and coordinator coordination without a physical BLE connection. Run via:
+  scaling, and coordinator coordination without a physical BLE connection. Asserts correct byte
+  scaling, offset calculation, and dynamic coordinator rescheduling logic. Run via:
   ```bash
   tests/venv/bin/pytest tests/
   ```
