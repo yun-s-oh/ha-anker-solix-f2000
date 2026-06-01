@@ -33,9 +33,7 @@ graph TD
 ## ⏰ The Bluetooth Timeout Problem (Mitigation)
 
 > [!WARNING]
-> The Anker Solix F2000 firmware automatically shuts off its Bluetooth radio after **12 hours** of inactivity. To re-enable it, you must physically walk over to the unit and press the IoT/Bluetooth button.
-> 
-> Yes — Anker decided to save milliwatts on a massive **2,048 Wh (2 kWh)** battery capacity by killing its local control channel.
+> The Anker Solix F2000 shuts off its Bluetooth radio after **12 hours** of inactivity or when the battery is fully drained. Once this occurs, it will require manual reactivation (physically pressing the IoT/Bluetooth button on the unit).
 
 This integration solves this problem permanently:
 
@@ -144,68 +142,9 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 
 ## 🧪 Standalone CLI Verification & Testing Suite
 
-An isolated Python virtual environment is housed under `tests/` to safely query
-telemetry, probe peripheral structures, and execute unit tests completely independent
-of Home Assistant. For detailed documentation on all available testing and validation
-scripts,
-see [tests/README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/tests/README.md).
+An isolated Python testing and validation suite is housed under `tests/` to safely query telemetry, probe peripheral structures, and execute unit tests completely independent of Home Assistant.
 
-### 1. Initialize Virtual Environment
-Navigate to the root directory and initialize the environment:
-```bash
-# Create venv using Python 3.11
-python3.11 -m venv tests/venv
-
-# Activate virtual environment
-source tests/venv/bin/activate
-
-# Install required dependencies
-pip install -r tests/requirements.txt
-```
-
-### 2. Configure Local Hardware parameters (`.env`)
-Create a `.env` file at the root:
-```ini
-# Private Local Hardware Parameters (Git-Ignored)
-ANKER_MAC_ADDRESS=XX:XX:XX:XX:XX:XX  # Target BLE MAC Address
-ANKER_DEVICE_NAME=767_PowerHouse
-```
-
-### 3. Run CLI Scripts
-Ensure your Python virtual environment is active (`source tests/venv/bin/activate`) before running the scripts.
-
-* **Interactive Control Console**: Explore and test unencrypted BLE controls
-  (switches, selects, recharging power sliders) interactively:
-  ```bash
-  tests/venv/bin/python tests/explore_controls.py
-  ```
-
-* **Scan & Auto-Configure**: Scan for nearby F2000 devices and auto-write MAC parameters directly to your root `.env` file:
-  ```bash
-  tests/venv/bin/python tests/test_passive_telemetry.py --scan
-  ```
-* **Decoded Telemetry Stream**: Connect and print continuous formatted real-time battery status reports:
-  ```bash
-  tests/venv/bin/python tests/test_passive_telemetry.py
-  ```
-  Add the `--raw` flag to dump the raw hex byte grid side-by-side with the decoded metrics:
-  ```bash
-  tests/venv/bin/python tests/test_passive_telemetry.py --raw
-  ```
-* **GATT Service Dumper**: Probe physical characteristics:
-  ```bash
-  tests/venv/bin/python tests/diagnose_gatt.py
-  ```
-* **Heartbeat Verification**: Test active connection persistence pings:
-  ```bash
-  tests/venv/bin/python tests/test_heartbeat.py
-  ```
-* **Run Mock Telemetry Pytest**: Execute unit tests mocking the F2000 state machine offline:
-  ```bash
-  tests/venv/bin/pytest tests/
-  ```
-  > [!NOTE]
-  > This command runs `tests/test_mock_telemetry.py` to assert correct byte scaling, offset calculation, and dynamic coordinator rescheduling logic without requiring a physical BLE radio connection.
+For detailed instructions on initial setup, hardware configuration, validation scripts, and diagnostic tools, please refer to the dedicated [tests/README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/tests/README.md).
 
 ---
 

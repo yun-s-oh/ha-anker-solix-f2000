@@ -19,8 +19,12 @@ Welcome to the Anker Solix F2000 (PowerHouse 767) Home Assistant BLE Custom Inte
 │   ├── config.yaml            # OpenSpec validation configuration
 │   └── style-guide.md         # Custom style standards (PEP 8, line limits, guidelines)
 ├── tests/                     # Isolated functional verification suite
+│   ├── README.md              # Test suite documentation & usage guide
 │   ├── diagnose_gatt.py       # GATT database structure prober & service dumper
+│   ├── explore_controls.py    # Interactive BLE controls console & sniffer
 │   ├── test_passive_telemetry.py # Standalone continuous polling & scanning script
+│   ├── test_mock_telemetry.py # Pytest unit tests mocking the F2000 state machine
+│   ├── validate_*.py          # Programmatic validation scripts for specific controls
 │   ├── requirements.txt       # Isolated script dependencies
 │   └── venv/                  # Python 3.11 virtual environment (Git-ignored)
 ├── README.md                  # Project landing page & quickstart instructions
