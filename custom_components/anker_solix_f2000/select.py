@@ -219,12 +219,24 @@ class AnkerSolixSelect(
             await self.coordinator.async_send_control_command(cmd_id, payload)
 
         elif key == "ac_outlet_timer":
+            if option == self.current_option:
+                _LOGGER.debug(
+                    "AC Sockets Shutdown Timer already set to %s, ignoring redundant update",
+                    option,
+                )
+                return
             cmd_id = 0x02
             seconds = option_to_seconds(option)
             payload = seconds.to_bytes(2, byteorder="little")
             await self.coordinator.async_send_control_command(cmd_id, payload)
 
         elif key == "dc_12v_port1_timer":
+            if option == self.current_option:
+                _LOGGER.debug(
+                    "12V Car Port Shutdown Timer already set to %s, ignoring redundant update",
+                    option,
+                )
+                return
             cmd_id = 0x03
             seconds = option_to_seconds(option)
             payload = seconds.to_bytes(2, byteorder="little")
