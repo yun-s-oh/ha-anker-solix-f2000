@@ -116,6 +116,8 @@ def parse_telemetry(data: bytes) -> dict[str, Any]:
         # Output power
         "ac_outlet_w": extract16(data, 21),
         "ac_outlet_on": bool(data[63]),
+        "twelve_volt_on": bool(data[80]),
+        "power_save_on": bool(data[82]),
         "total_output_w": extract16(data, 41),
         # USB ports
         "usb_c1_on": bool(data[75]),

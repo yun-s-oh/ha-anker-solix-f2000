@@ -57,6 +57,8 @@ def test_generate_and_parse_telemetry() -> None:
         ac_out_w=120,
         temp_c=22,
         serial="AZV25N0F30400256",
+        twelve_volt_on=True,
+        power_save_on=True,
     )
 
     # 102 bytes total
@@ -72,6 +74,8 @@ def test_generate_and_parse_telemetry() -> None:
     assert parsed["power_input"]["ac_input_w"] == 450
     assert parsed["power_output"]["ac_outlet_w"] == 120
     assert parsed["power_output"]["ac_outlet_on"] is True
+    assert parsed["power_output"]["twelve_volt_on"] is True
+    assert parsed["power_output"]["power_save_on"] is True
     assert parsed["device"]["serial"] == "AZV25N0F30400256"
 
 
