@@ -38,6 +38,8 @@ def generate_telemetry(
     ac_out_w: int = 0,
     temp_c: int = 25,
     serial: str = "AZV25N0F30400256",
+    twelve_volt_on: bool = False,
+    power_save_on: bool = False,
 ) -> bytes:
     """Generate a 102-byte Main Telemetry (0x49) mock packet with correct checksum."""
     # Header: 09 ff 00 00 01, Type: 01, SubType: 49, Length: 66 00 (102 bytes total)
@@ -87,8 +89,11 @@ def generate_telemetry(
     # Byte 72: Total Battery %
     packet.append(battery_pct)
 
-    # Padding up to Byte 85
-    packet.extend([0x00] * 12)  # Bytes 73 to 84
+    # Bytes 73 to 84 (containing USB states, 12V DC states, Power Save, etc.)
+    padding_and_states = bytearray([0x00] * 12)
+    padding_and_states[7] = 1 if twelve_volt_on else 0  # Byte 80
+    padding_and_states[9] = 1 if power_save_on else 0   # Byte 82
+    packet.extend(padding_and_states)
 
     # Byte 85-100: Serial Number (ASCII 16 bytes)
     serial_bytes = serial.encode("utf-8").ljust(16, b"\x00")[:16]
@@ -145,6 +150,8 @@ def parse_packet(data: bytes) -> dict | None:
                 "power_output": {
                     "ac_outlet_w": ac_out,
                     "ac_outlet_on": bool(data[63]),
+                    "twelve_volt_on": bool(data[80]),
+                    "power_save_on": bool(data[82]),
                 },
                 "device": {
                     "serial": serial_str,

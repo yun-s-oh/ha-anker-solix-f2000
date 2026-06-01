@@ -26,22 +26,6 @@ _LOGGER = logging.getLogger(__name__)
 
 # List of all binary sensors exposed by the F2000 BLE API
 BINARY_SENSOR_DESCRIPTIONS: list[BinarySensorEntityDescription] = [
-    # Master Outlet / Power Save Switches
-    BinarySensorEntityDescription(
-        key="ac_outlet_on",
-        name="AC Outlet Master State",
-        device_class=BinarySensorDeviceClass.POWER,
-    ),
-    BinarySensorEntityDescription(
-        key="twelve_volt_on",
-        name="12V Car Port Master State",
-        device_class=BinarySensorDeviceClass.POWER,
-    ),
-    BinarySensorEntityDescription(
-        key="power_save_on",
-        name="Power Save Mode State",
-        icon="mdi:sprout",
-    ),
     # USB Port States
     BinarySensorEntityDescription(
         key="usb_c1_on",
