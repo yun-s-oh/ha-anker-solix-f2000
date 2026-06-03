@@ -7,26 +7,39 @@ A premium, cloud-free custom HACS integration for the **Anker Solix F2000 (Power
 [![Add Integration to your Home Assistant instance.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=anker_solix_f2000)
 
 > [!NOTE]
-> This integration leverages unencrypted local BLE notifications, bypassing latency, internet dependencies, and cloud API limits, enabling a fully local smart home dashboard.
+> This integration leverages unencrypted local BLE notifications, bypassing latency,
+> internet dependencies, and cloud API limits, enabling a fully local smart home dashboard.
+
+> [!IMPORTANT]
+> **Exclusive Bluetooth Connection Lockout**: The Anker Solix F2000 only supports
+> **one active Bluetooth connection** at a time. Because this integration maintains
+> a persistent BLE connection to keep the station's Bluetooth radio active and poll
+> telemetry, **you cannot use the official Anker mobile app to connect to the F2000
+> while this integration is active**. The app must be fully closed/terminated on
+> all devices for the integration to function.
 
 ---
 
 ## 🏗️ Architecture & Communication Flow
 
-The F2000 power station broadcasts unencrypted telemetry bytes on a custom notification characteristic and receives keep-alive pings on a write-without-response characteristic.
+This integration is built around Home Assistant's native Bluetooth subsystem and
+updates its state entities asynchronously using a central `DataUpdateCoordinator`.
 
 ```mermaid
 graph TD
-    A[Start Scanner] --> B{Resolved MAC Address?}
-    B -- No --> C[Scan & Auto-Save MAC to .env]
-    C --> D[Connect to F2000 BLE Client]
-    B -- Yes --> D
-    D --> E[Subscribe to Telemetry Char 00008888]
-    E --> F{Receive Bytes?}
-    F -- Yes --> G[Print Decoded JSON & Format UI]
-    F -- No (Timeout 5s) --> H[Ping Command Char 00007777]
-    H --> F
+    A[Home Assistant Start / Config] --> B[Resolve BLE Device via HASS Bluetooth Subsystem]
+    B --> C[Establish Connection using Bleak & bleak_retry_connector]
+    C --> D[Subscribe to Telemetry Notifications Char 00008888]
+    D --> E[Periodic Poll/Keep-Alive: Write to Command Char 00007777]
+    D --> F[Receive Telemetry Bytes]
+    F --> G[Parse Byte Buffers State/Telemetry/Aux]
+    G --> H[Update Home Assistant Coordinator State]
 ```
+
+The integration manages a persistent BLE connection using `bleak_retry_connector` to
+ensure automatic reconnection after dropouts. It subscribes to notification updates
+on characteristic `00008888` and writes a keep-alive telemetry query to
+characteristic `00007777` at the user-configured polling interval.
 
 ---
 
@@ -53,7 +66,8 @@ This integration solves this problem permanently:
 * **100% Offline & Local**: Zero cloud dependencies or internet access required.
 * **Unified Battery Indicator**: Automatically maps `total_pct` to `"Battery"`, allowing HASS to natively display your power station's state of charge next to the integration card logo.
 * **Diagnostic Isolation**: Sub-pack metrics (`internal_pct` and `external_pct`) are correctly categorized as `DIAGNOSTIC` to prevent unconnected expansion batteries from overriding device-level status.
-* **Setup-Level Polling Options**: Enter active polling intervals (5s–30s) and reconnection ceiling parameters directly inside the initial configuration setup step.
+* **Setup-Level Polling Options**: Enter active polling intervals (5s–300s) and
+  reconnection ceiling parameters directly inside the initial configuration setup step.
 * **Embedded Brand Assets**: Polished custom high-resolution icons and logos packaged offline inside `brand/` for native dashboard styling.
 
 ---

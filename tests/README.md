@@ -10,6 +10,33 @@ requiring a full Home Assistant installation.
 
 ---
 
+## 🏗️ CLI Architecture & Communication Flow
+
+The standalone CLI scripts (e.g., `explore_controls.py`, `test_passive_telemetry.py`)
+communicate with the F2000 power station using the following logic:
+
+```mermaid
+graph TD
+    A[Start Scanner] --> B{Resolved MAC Address?}
+    B -- No --> C[Scan & Auto-Save MAC to .env]
+    C --> D[Connect to F2000 BLE Client]
+    B -- Yes --> D
+    D --> E[Subscribe to Telemetry Char 00008888]
+    E --> F{Receive Bytes?}
+    F -- Yes --> G[Print Decoded JSON & Format UI]
+    F -- No (Timeout 5s) --> H[Ping Command Char 00007777]
+    H --> F
+```
+
+The F2000 power station broadcasts unencrypted telemetry bytes on the notification
+characteristic `00008888` and receives keep-alive queries or control commands on
+the write-without-response characteristic `00007777`. When running a test script,
+the scanner resolves the target BLE MAC address (auto-discovering the nearby device
+if none is configured) and automatically saves it to the root `.env` file for
+subsequent executions.
+
+---
+
 ## ⚙️ Initial Setup
 
 ### 1. Initialize Virtual Environment & Dependencies
