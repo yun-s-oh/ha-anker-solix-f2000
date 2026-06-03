@@ -65,7 +65,9 @@ This integration solves this problem permanently:
 
 * **100% Offline & Local**: Zero cloud dependencies or internet access required.
 * **Unified Battery Indicator**: Automatically maps `total_pct` to `"Battery"`, allowing HASS to natively display your power station's state of charge next to the integration card logo.
-* **Diagnostic Isolation**: Sub-pack metrics (`internal_pct` and `external_pct`) are correctly categorized as `DIAGNOSTIC` to prevent unconnected expansion batteries from overriding device-level status.
+* **Dynamic Expansion Isolation**: Automatically detects physical expansion battery connectivity
+  and isolates metrics (`external_pct`, `external_temp_c`), reporting `None` when disconnected
+  to prevent empty slots from skewing system-level status.
 * **Setup-Level Polling Options**: Enter active polling intervals (5s–300s) and
   reconnection ceiling parameters directly inside the initial configuration setup step.
 * **Embedded Brand Assets**: Polished custom high-resolution icons and logos packaged offline inside `brand/` for native dashboard styling.
@@ -94,8 +96,8 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | Entity Name | Key | Device Class | Unit | Category | Description |
 |---|---|---|---|---|---|
 | **Battery** | `total_pct` | `battery` | `%` | None (Badge) | Main battery State of Charge |
-| **Internal Battery** | `internal_pct` | `battery` | `%` | `diagnostic` | Main internal battery capacity |
-| **External Battery Expansion** | `external_pct` | `battery` | `%` | `diagnostic` | Unconnected/Connected expansion pack capacity |
+| **Internal Battery** | `internal_pct` | `battery` | `%` | None | Internal battery capacity |
+| **External Battery Expansion** | `external_pct` | `battery` | `%` | None | Expansion capacity |
 | **Battery Operating State** | `battery_state` | None | None | None | Current state (Idle, Discharging, Charging) |
 | **Battery Runtime Remaining** | `battery_remaining_minutes` | `duration` | `min` | None | Calculated operating minutes remaining |
 | **Internal Battery Temperature** | `internal_temp_c` | `temperature` | `°C` | None | Temperature of the main internal battery |
