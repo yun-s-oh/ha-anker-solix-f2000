@@ -46,7 +46,9 @@ The Anker Solix F2000 communicates locally over unencrypted Bluetooth Low Energy
 ### Header & Checksum
 All packets exchanged on `7777`/`8888` follow standard formats. Outbound control commands use a command header (`08 EE 00 00 00 02`) while inbound telemetry packets use an advertising header (`09 FF 00 00 01`).
 The final byte of every packet contains a checksum computed as:
-$$\text{Checksum} = \sum(\text{all preceding bytes}) \ \& \ 0\text{xFF}$$
+```text
+Checksum = sum(all preceding bytes) & 0xFF
+```
 
 For detailed packet layouts, see the archived
 [ble-protocol/spec.md][ble_spec].
