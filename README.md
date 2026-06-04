@@ -178,7 +178,9 @@ Access the local web portal at [http://localhost:8123](http://localhost:8123).
 ## ⚠️ Troubleshooting & macOS Bluetooth Guidelines
 
 * **Exclusive Connection Lockout**: Anker units support **only one active Bluetooth connection**. Completely force-close the official Anker app on all mobile devices before connecting Home Assistant.
-* **macOS Host Limitations**: Hypervisors running Docker on macOS cannot pass physical Bluetooth controllers. Run unit tests and verification CLI scripts natively inside your macOS host's Python virtual environment (`tests/venv/`) to allow CoreBluetooth access.
+* **macOS Host Limitations**: Hypervisors running Docker on macOS cannot pass physical
+  Bluetooth controllers. Run unit tests and verification CLI scripts natively inside your macOS
+  host's Python virtual environment (`tests/venv/`) synced via `uv` to allow CoreBluetooth access.
 * **macOS Caching Issues**: If peripheral structures become unresponsive, toggle your Bluetooth radio off/on in System Settings, or reset the local daemon:
   ```bash
   sudo pkill bluetoothd
