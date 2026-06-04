@@ -28,6 +28,8 @@ Welcome to the Anker Solix F2000 (PowerHouse 767) Home Assistant BLE Custom Inte
 │   ├── requirements.txt       # Isolated script dependencies
 │   └── venv/                  # Python 3.11 virtual environment (Git-ignored)
 ├── README.md                  # Project landing page & quickstart instructions
+├── pyproject.toml             # Dependency configurations for uv
+├── uv.lock                    # Hash-verified package lockfile
 ├── .env                       # Local private device credentials (Git-ignored)
 └── .gitignore                 # Safe pattern definitions
 ```
@@ -79,7 +81,8 @@ All code contributions must follow these strict validation standards:
 *   **Strict Line Limits**: Limit all source code and script lines to a **maximum of 100 characters**.
 *   **PEP 8 Standards**: Code must be properly formatted and documented.
 *   **Type Hinting**: Provide explicit type hints for all parameters, variables, and return types.
-*   **Quality Checks**: Before staging files, always run syntax validation and linting using `flake8` under the isolated virtual environment:
+*   **Quality Checks**: Before staging files, always run syntax validation and linting using
+    `flake8` under the isolated virtual environment synced via `uv`:
     ```bash
     ./tests/venv/bin/flake8 tests/test_passive_telemetry.py --max-line-length=100
     ./tests/venv/bin/python -m py_compile tests/test_passive_telemetry.py

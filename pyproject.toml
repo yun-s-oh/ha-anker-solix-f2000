@@ -1,0 +1,17 @@
+[project]
+name = "ha-anker-solix-f2000"
+version = "1.0.5"
+description = "Anker Solix F2000 Home Assistant BLE Custom Integration"
+requires-python = ">=3.11"
+dependencies = [
+    "bleak>=0.21.0",
+    "SolixBLE>=0.2.0",
+    "bleak-retry-connector>=3.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "flake8",
+    "pytest",
+]
+

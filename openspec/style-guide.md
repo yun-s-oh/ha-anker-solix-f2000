@@ -53,7 +53,16 @@ Group imports logically and separate groups with a single blank line. Order impo
 
 ### 7. Named Constants (No Magic Numbers)
 - Avoid hardcoded values ("magic numbers") in business logic.
-- Always define reusable config keys, GATT service UUIDs, timeouts, and thresholds as uppercase named constants in `const.py`.
+- Always define reusable config keys, GATT service UUIDs, timeouts, and thresholds as
+  uppercase named constants in `const.py`.
+
+### 8. Quality Checks & Verification
+- Prior to staging files, run syntax validation and linting checks under the virtual environment
+  synced via `uv`:
+  ```bash
+  ./tests/venv/bin/flake8 custom_components/ --max-line-length=100
+  ./tests/venv/bin/python -m py_compile custom_components/**/*.py
+  ```
 
 ---
 

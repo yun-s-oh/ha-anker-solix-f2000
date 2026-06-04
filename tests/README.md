@@ -40,16 +40,14 @@ subsequent executions.
 ## ⚙️ Initial Setup
 
 ### 1. Initialize Virtual Environment & Dependencies
-All scripts run inside an isolated Python virtual environment:
+All script dependencies are securely locked with hashes in `uv.lock` at the root. Initialize
+and synchronize the virtual environment (`tests/venv`) with the locked dependency tree:
 ```bash
-# Create the virtual environment using Python 3.11
-python3.11 -m venv tests/venv
+# Synchronize and provision the virtual environment using the lockfile
+UV_PROJECT_ENVIRONMENT=tests/venv uv sync
 
 # Activate the virtual environment
 source tests/venv/bin/activate
-
-# Install dependencies (bleak, flake8, pytest, etc.)
-pip install -r tests/requirements.txt
 ```
 
 ### 2. Configure Local Hardware Parameters (`.env`)
