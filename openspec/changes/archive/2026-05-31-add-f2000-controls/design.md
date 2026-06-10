@@ -29,9 +29,9 @@ We will create `tests/explore_controls.py` using `bleak`. It will dynamically lo
 
 ### 2. Home Assistant Platform Design
 We will structure the component with new platform handlers:
-- **[switch.py](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/custom_components/anker_solix_f2000/switch.py)**: Exposes `ac_outlet_on` and `dc_12v_on` as HASS switches.
-- **[select.py](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/custom_components/anker_solix_f2000/select.py)**: Exposes dropdown menus for setting `led_state` (Off, Low, Mid, High, SOS) and screen timeouts.
-- **[number.py](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/custom_components/anker_solix_f2000/number.py)**: Exposes a slider for `ac_recharging_power`.
+- **[switch.py](/custom_components/anker_solix_f2000/switch.py)**: Exposes `ac_outlet_on` and `dc_12v_on` as HASS switches.
+- **[select.py](/custom_components/anker_solix_f2000/select.py)**: Exposes dropdown menus for setting `led_state` (Off, Low, Mid, High, SOS) and screen timeouts.
+- **[number.py](/custom_components/anker_solix_f2000/number.py)**: Exposes a slider for `ac_recharging_power`.
 
 Each command write will trigger an immediate active query to update the state coordinator, guaranteeing instant state updates on the UI.
 

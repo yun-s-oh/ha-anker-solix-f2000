@@ -10,11 +10,11 @@ and transitive dependencies into a secure, hash-verified `uv.lock` file.
 
 - Create a minimal root `pyproject.toml` to declare dependencies and development tools.
 - Generate a secure, hash-verified `uv.lock` file locking all direct and transitive dependencies.
-- Modify [openspec/style-guide.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/openspec/style-guide.md)
+- Modify [openspec/style-guide.md](/openspec/style-guide.md)
   to reference `uv` instead of `pip`/`venv` for quality checks.
-- Update [README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/README.md)
+- Update [README.md](/README.md)
   development setup notes to recommend `uv` and lockfile-based syncing.
-- Update [tests/README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/tests/README.md)
+- Update [tests/README.md](/tests/README.md)
   to explain environment syncing using `uv.lock` instead of manual pip installation.
 - Refactor the automated development/agent setup guidelines and spec files to standardize
   on `uv` lockfile commands.
