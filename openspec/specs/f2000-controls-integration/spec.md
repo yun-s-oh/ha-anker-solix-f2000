@@ -1,7 +1,7 @@
 # f2000-controls-integration Specification
 
 ## Purpose
-TBD - created by archiving change add-f2000-controls. Update Purpose after archive.
+This specification defines the Home Assistant integration entities (switches, selects, numbers) exposed to control operational parameters of the Anker Solix F2000 over BLE. It covers the logic for changing AC Output, DC Output, Power Saving Mode, LED light intensity, screen brightness/timeout settings, and AC charging current limit thresholds.
 ## Requirements
 ### Requirement: Switch Controls
 The integration SHALL expose switch entities to control `AC Output`, `DC Output`, and `Power Saving Mode` on the Anker F2000. The integration SHALL update the state of the Power Saving Mode switch entity based on the `power_save_on` state received via the 14-byte `0x48` State ACK packet (byte register `11`) and the 122-byte `0x01` Auxiliary State packet (byte register `117`), and SHALL NOT query or update the Power Saving Mode state from the 102-byte `0x49` Telemetry packet.

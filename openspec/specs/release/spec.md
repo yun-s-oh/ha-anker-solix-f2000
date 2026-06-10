@@ -1,7 +1,7 @@
 # release Specification
 
 ## Purpose
-TBD - created by archiving change configure-automated-releases. Update Purpose after archive.
+This specification defines the repository's continuous integration and deployment (CI/CD) release pipeline. It details the requirements for manifest metadata verification, automated version calculations on push events to `main`, synchronization of the manifest file versioning, and publishing of GitHub Releases.
 ## Requirements
 ### Requirement: Manifest Metadata Accuracy
 The integration manifest file `manifest.json` SHALL contain the correct repository URL under the `"documentation"` field, pointing to `https://github.com/yun-s-oh/ha-anker-solix-f2000`.
