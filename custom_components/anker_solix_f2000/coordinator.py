@@ -339,8 +339,18 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                         _LOGGER.warning("Error during BLE client disconnect shutdown: %s", err)
                 self._client = None
 
-    async def async_send_control_command(self, cmd_id: int, payload: bytes) -> bool:
-        """Send a control command to the F2000 and wait for its ACK."""
+    async def async_send_control_command(
+        self, cmd_id: int, payload: bytes, *, skip_refresh: bool = False
+    ) -> bool:
+        """Send a control command to the F2000 and wait for its ACK.
+
+        Args:
+            cmd_id: The unencrypted command ID byte (e.g., 0x86 for AC toggle).
+            payload: The payload bytes to send with the command.
+            skip_refresh: If True, suppress the 0.5s deferred telemetry refresh.
+                Used for toggle commands (AC/DC/Power Save) where the immediate
+                BLE activity from a refresh can interfere with the toggled state.
+        """
         if not self._client or not self._client.is_connected:
             _LOGGER.warning("Cannot send control command: BLE not connected")
             return False
@@ -363,10 +373,15 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
                 await self._client.write_gatt_char(WRITE_UUID, packet_bytes, response=False)
 
             # Optimistically update local state cache for instant UI feedback
+            # AC and DC are hardware toggles — invert current state for optimistic update
             if cmd_id == 0x86:
-                self._state_data["ac_outlet_on"] = bool(payload[0])
+                self._state_data["ac_outlet_on"] = not self._state_data.get(
+                    "ac_outlet_on", False
+                )
             elif cmd_id == 0x87:
-                self._state_data["twelve_volt_on"] = bool(payload[0])
+                self._state_data["twelve_volt_on"] = not self._state_data.get(
+                    "twelve_volt_on", False
+                )
             elif cmd_id == 0x8A:
                 self._state_data["power_save_on"] = bool(payload[0])
             elif cmd_id == 0x8B:
@@ -393,8 +408,10 @@ class AnkerSolixBluetoothUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]
 
             self.async_set_updated_data(dict(self._state_data))
 
-            # Schedule a deferred active query refresh to fetch official telemetry 0.5s later
-            self.hass.async_create_task(self._async_deferred_refresh())
+            # Schedule a deferred active query refresh to fetch official telemetry 0.5s later.
+            # Skip for toggle commands to avoid BLE activity that interferes with toggled state.
+            if not skip_refresh:
+                self.hass.async_create_task(self._async_deferred_refresh())
             return True
         except BleakError as err:
             _LOGGER.error("Failed to send BLE command 0x%02X: %s", cmd_id, err)

@@ -86,17 +86,48 @@ class AnkerSolixSwitch(
             return None
         return bool(value)
 
+    def _is_toggle_command(self) -> bool:
+        """Return True if this command behaves as a hardware toggle."""
+        return self.entity_description.key in ("ac_outlet_on", "twelve_volt_on")
+
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Turn the control switch ON."""
+        """Turn the control switch ON.
+
+        For hardware toggle commands (AC and DC), we guard against sending when
+        already ON to prevent an unintended toggle to OFF. When state is unknown
+        (None), we send unconditionally to avoid silently dropping commands.
+        """
+        if self._is_toggle_command() and self.is_on:
+            _LOGGER.debug(
+                "Switch %s already ON, skipping toggle command",
+                self.entity_description.key,
+            )
+            return
         cmd_id = self._get_command_id()
         _LOGGER.debug("Turning switch %s ON via BLE", self.entity_description.key)
-        await self.coordinator.async_send_control_command(cmd_id, bytes([0x01]))
+        # Suppress deferred refresh only for Power Save ON command to prevent reverting
+        skip_refresh = (self.entity_description.key == "power_save_on")
+        await self.coordinator.async_send_control_command(
+            cmd_id, bytes([0x01]), skip_refresh=skip_refresh
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Turn the control switch OFF."""
+        """Turn the control switch OFF.
+
+        For hardware toggle commands (AC and DC), we guard against sending when
+        already OFF to prevent an unintended toggle to ON.
+        """
+        if self._is_toggle_command() and self.is_on is False:
+            _LOGGER.debug(
+                "Switch %s already OFF, skipping toggle command",
+                self.entity_description.key,
+            )
+            return
         cmd_id = self._get_command_id()
         _LOGGER.debug("Turning switch %s OFF via BLE", self.entity_description.key)
-        await self.coordinator.async_send_control_command(cmd_id, bytes([0x00]))
+        await self.coordinator.async_send_control_command(
+            cmd_id, bytes([0x00]), skip_refresh=False
+        )
 
     def _get_command_id(self) -> int:
         """Map entity key to unencrypted control command ID."""
