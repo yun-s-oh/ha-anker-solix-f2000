@@ -9,7 +9,7 @@ version dependencies cleanly, and allow automatic bootstrapping of the correct P
 ## Goals / Non-Goals
 
 **Goals:**
-- Update [openspec/style-guide.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/openspec/style-guide.md), [README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/README.md), [tests/README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/tests/README.md), and [agent-guidelines.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/agent-guidelines.md) to use `uv`.
+- Update [openspec/style-guide.md](/openspec/style-guide.md), [README.md](/README.md), [tests/README.md](/tests/README.md), and [agent-guidelines.md](/agent-guidelines.md) to use `uv`.
 - Transition local developer setup instructions from `pip install` to `uv pip install`.
 - Update the quality check commands in agent guidelines and workflows to refer to running under the new `uv`-based virtual environment path.
 

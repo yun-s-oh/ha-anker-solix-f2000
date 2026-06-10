@@ -3,7 +3,7 @@
 A premium, cloud-free custom HACS integration for the **Anker Solix F2000 (PowerHouse 767)** portable power station, operating completely locally via Bluetooth Low Energy (BLE).
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
-[![Open your Home Assistant instance and open a repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=yunseokoh&repository=ha-anker-solix-f2000&category=integration)
+[![Open your Home Assistant instance and open a repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=yun-s-oh&repository=ha-anker-solix-f2000&category=integration)
 [![Add Integration to your Home Assistant instance.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=anker_solix_f2000)
 
 > [!NOTE]
@@ -160,7 +160,7 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 
 An isolated Python testing and validation suite is housed under `tests/` to safely query telemetry, probe peripheral structures, and execute unit tests completely independent of Home Assistant.
 
-For detailed instructions on initial setup, hardware configuration, validation scripts, and diagnostic tools, please refer to the dedicated [tests/README.md](file:///Users/yunseokoh/Projects/ha-anker-solix-f2000/tests/README.md).
+For detailed instructions on initial setup, hardware configuration, validation scripts, and diagnostic tools, please refer to the dedicated [tests/README.md](/tests/README.md).
 
 ---
 
