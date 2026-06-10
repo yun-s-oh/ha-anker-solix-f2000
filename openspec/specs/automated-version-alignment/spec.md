@@ -1,7 +1,7 @@
 # automated-version-alignment Specification
 
 ## Purpose
-TBD - created by archiving change f2000-wake-version-fix. Update Purpose after archive.
+This specification defines the requirements for automated version alignment during repository releases, ensuring that the version in `manifest.json` is automatically updated and committed to the main branch prior to creating and publishing the official Git release tag.
 ## Requirements
 ### Requirement: Dry-Run Release Tag Calculation
 The release workflow SHALL calculate the next Git tag in a dry-run mode before modifying

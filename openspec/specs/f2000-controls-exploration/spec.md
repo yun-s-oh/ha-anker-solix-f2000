@@ -1,7 +1,7 @@
 # f2000-controls-exploration Specification
 
 ## Purpose
-TBD - created by archiving change add-f2000-controls. Update Purpose after archive.
+This specification outlines the utility scripts and exploration tools developed to interface directly with the Anker Solix F2000 over BLE. It defines the requirements for standalone CLI scripts that allow developers to construct, checksum, and transmit unencrypted control commands, and capture inbound device notifications for protocol analysis.
 ## Requirements
 ### Requirement: Standalone BLE Command Sender
 The test suite SHALL include a command-line exploration script `tests/explore_controls.py` that allows sending arbitrary hexadecimal BLE payloads to the F2000's control characteristic (`00007777-0000-1000-8000-00805f9b34fb`) and printing returned responses from notification descriptor (`00008888-0000-1000-8000-00805f9b34fb`).

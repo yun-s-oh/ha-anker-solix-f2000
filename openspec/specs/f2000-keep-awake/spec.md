@@ -1,7 +1,7 @@
 # f2000-keep-awake Specification
 
 ## Purpose
-TBD - created by archiving change f2000-wake-version-fix. Update Purpose after archive.
+This specification defines the integration's keep-awake heartbeat mechanism. It details the requirements for maintaining a persistent GATT connection and dispatching periodic query pings over BLE to prevent the Anker Solix F2000 from entering low-power standby mode when ports are idle.
 ## Requirements
 ### Requirement: Active BLE Interrogation Heartbeat
 The integration SHALL maintain a persistent active GATT connection and dispatch periodic
