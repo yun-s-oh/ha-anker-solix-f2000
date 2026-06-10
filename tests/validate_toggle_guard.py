@@ -120,16 +120,16 @@ class ToggleGuardVerificationSession:
             elif sub_type == 0x49 and len(frame) >= 102:  # Telemetry (102 bytes)
                 self.ac_state = bool(frame[63])
                 self.dc_state = bool(frame[80])
-                self.power_save_state = bool(frame[82])
+                # Power Save is not in Telemetry, so do not update self.power_save_state here
                 logger.info(
-                    "Telemetry (0x49): AC=%s, DC=%s, PowerSave=%s",
-                    self.ac_state, self.dc_state, self.power_save_state,
+                    "Telemetry (0x49): AC=%s, DC=%s",
+                    self.ac_state, self.dc_state,
                 )
                 self.update_event.set()
             elif sub_type == 0x01 and len(frame) == 122:  # Aux state (122 bytes)
                 self.ac_state = bool(frame[63])
                 self.dc_state = bool(frame[80])
-                self.power_save_state = bool(frame[82])
+                self.power_save_state = bool(frame[117])
                 logger.info(
                     "AuxState (0x01): AC=%s, DC=%s, PowerSave=%s",
                     self.ac_state, self.dc_state, self.power_save_state,
