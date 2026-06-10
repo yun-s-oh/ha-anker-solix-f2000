@@ -39,7 +39,6 @@ def generate_telemetry(
     temp_c: int = 25,
     serial: str = "AZV25N0F30400256",
     twelve_volt_on: bool = False,
-    power_save_on: bool = False,
 ) -> bytes:
     """Generate a 102-byte Main Telemetry (0x49) mock packet with correct checksum."""
     # Header: 09 ff 00 00 01, Type: 01, SubType: 49, Length: 66 00 (102 bytes total)
@@ -92,7 +91,6 @@ def generate_telemetry(
     # Bytes 73 to 84 (containing USB states, 12V DC states, Power Save, etc.)
     padding_and_states = bytearray([0x00] * 12)
     padding_and_states[7] = 1 if twelve_volt_on else 0  # Byte 80
-    padding_and_states[9] = 1 if power_save_on else 0   # Byte 82
     packet.extend(padding_and_states)
 
     # Byte 85-100: Serial Number (ASCII 16 bytes)
@@ -100,6 +98,42 @@ def generate_telemetry(
     packet.extend(serial_bytes)
 
     # Checksum (Byte 101)
+    packet.append(calculate_checksum(bytes(packet)))
+
+    return bytes(packet)
+
+
+def generate_aux_state(
+    ac_recharging_power: int = 500,
+    screen_timeout: int = 30,
+    power_save_on: bool = False,
+) -> bytes:
+    """Generate a 122-byte Auxiliary State (0x01) mock packet with correct checksum."""
+    # Header: 09 ff 00 00 01, Type: 01, SubType: 01, Length: 7a 00 (122 bytes total)
+    packet = bytearray([0x09, 0xFF, 0x00, 0x00, 0x01, 0x01, 0x01, 0x7A, 0x00])
+
+    # Padding / Telemetry simulation up to Byte 101 (92 empty bytes)
+    packet.extend([0x00] * 92)
+
+    # Byte 101-102: ac_recharging_power (uint16 LE)
+    packet.extend(ac_recharging_power.to_bytes(2, byteorder="little"))
+
+    # Byte 103-104: Padding/Other
+    packet.extend([0x00] * 2)
+
+    # Byte 105-106: screen_timeout (uint16 LE)
+    packet.extend(screen_timeout.to_bytes(2, byteorder="little"))
+
+    # Padding up to Byte 117
+    packet.extend([0x00] * 10)  # Bytes 107 to 116
+
+    # Byte 117: Power Save State
+    packet.append(1 if power_save_on else 0)
+
+    # Padding up to Byte 121
+    packet.extend([0x00] * 3)   # Bytes 118, 119, 120
+
+    # Checksum (Byte 121)
     packet.append(calculate_checksum(bytes(packet)))
 
     return bytes(packet)
@@ -121,7 +155,7 @@ def parse_packet(data: bytes) -> dict | None:
         return {"type": "checksum_error", "got": chk, "expected": expected_chk}
 
     packet_type_byte = data[5]  # 0x01 = Telemetry/StateAck, 0x02 = CommandAck
-    sub_type = data[6]          # 0x48 = StateAck, 0x49 = Telemetry
+    sub_type = data[6]          # 0x48 = StateAck, 0x49 = Telemetry / 0x01 = AuxState
 
     if packet_type_byte == 0x01:
         if sub_type == 0x48:
@@ -151,11 +185,20 @@ def parse_packet(data: bytes) -> dict | None:
                     "ac_outlet_w": ac_out,
                     "ac_outlet_on": bool(data[63]),
                     "twelve_volt_on": bool(data[80]),
-                    "power_save_on": bool(data[82]),
                 },
                 "device": {
                     "serial": serial_str,
                 },
+            }
+        elif sub_type == 0x01:
+            # 122-byte Auxiliary state frame
+            ac_recharging_power = int.from_bytes(data[101:103], byteorder="little")
+            screen_timeout = int.from_bytes(data[105:107], byteorder="little")
+            return {
+                "type": "aux_state",
+                "ac_recharging_power": ac_recharging_power,
+                "screen_timeout": screen_timeout,
+                "power_save_on": bool(data[117]),
             }
 
     return None

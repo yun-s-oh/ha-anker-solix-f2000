@@ -9,6 +9,7 @@ from mock_f2000 import (
     calculate_checksum,
     generate_state_ack,
     generate_telemetry,
+    generate_aux_state,
     parse_packet,
 )
 
@@ -58,7 +59,6 @@ def test_generate_and_parse_telemetry() -> None:
         temp_c=22,
         serial="AZV25N0F30400256",
         twelve_volt_on=True,
-        power_save_on=True,
     )
 
     # 102 bytes total
@@ -75,8 +75,32 @@ def test_generate_and_parse_telemetry() -> None:
     assert parsed["power_output"]["ac_outlet_w"] == 120
     assert parsed["power_output"]["ac_outlet_on"] is True
     assert parsed["power_output"]["twelve_volt_on"] is True
-    assert parsed["power_output"]["power_save_on"] is True
     assert parsed["device"]["serial"] == "AZV25N0F30400256"
+
+
+def test_generate_and_parse_aux_state() -> None:
+    """Verify mock Auxiliary State (0x01) generation and parsing."""
+    raw_packet = generate_aux_state(
+        ac_recharging_power=650,
+        screen_timeout=45,
+        power_save_on=True,
+    )
+
+    # 122 bytes total
+    assert len(raw_packet) == 122
+
+    # Header check
+    assert raw_packet[0:5] == b"\x09\xff\x00\x00\x01"
+    assert raw_packet[5] == 0x01  # Telemetry type
+    assert raw_packet[6] == 0x01  # AuxState subtype
+
+    # Parse and assert fields
+    parsed = parse_packet(raw_packet)
+    assert parsed is not None
+    assert parsed["type"] == "aux_state"
+    assert parsed["ac_recharging_power"] == 650
+    assert parsed["screen_timeout"] == 45
+    assert parsed["power_save_on"] is True
 
 
 def test_checksum_validation_rejection() -> None:
