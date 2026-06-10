@@ -115,6 +115,12 @@ Verifies setting the AC Recharging limit (200W - 2200W) via command 0x80.
 tests/venv/bin/python tests/validate_recharge_power.py
 ```
 
+### 9. Switch Toggle Guard & Power Save Validator (`validate_toggle_guard.py`)
+Validates that AC/DC commands behave as hardware toggles, and diagnoses Power Save sensitivity to deferred active telemetry queries.
+```bash
+tests/venv/bin/python tests/validate_toggle_guard.py
+```
+
 ---
 
 ## 🔬 Diagnostic & Utility Tools
