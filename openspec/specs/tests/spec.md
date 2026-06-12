@@ -18,10 +18,7 @@ The standalone test script SHALL support a keep-alive mode that sends periodic q
 - **THEN** it sends a query packet every 5 minutes, keeps the BLE radio active, and reports zero connection drops.
 
 ### Requirement: Standardized Tests Directory Layout
-The isolated functional verification CLI suite and mock telemetry unit tests SHALL be housed under
-the standard `tests/` directory. Their environment setup SHALL use `uv` and a root `pyproject.toml`
-to natively lock all direct and transitive dependencies into a secure, hash-verified `uv.lock` file,
-guaranteeing identical and secure environments across machines.
+The isolated functional verification CLI suite, mock telemetry unit tests, settings comparison helper (`compare_settings.py`), and recharge/timeout protocol discovery utility scripts (`discover_recharge_exhaustive.py`, `discover_timeout_protocol.py`) SHALL be housed under the standard `tests/` directory. Their environment setup SHALL use `uv` and a root `pyproject.toml` to natively lock all direct and transitive dependencies into a secure, hash-verified `uv.lock` file, guaranteeing identical and secure environments across machines.
 
 #### Scenario: Running the verification scripts
 - **WHEN** the user synchronizes the environment via `uv sync`
