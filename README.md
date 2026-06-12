@@ -114,14 +114,13 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | **USB-A Port 2 Power** | `usb_a2_w` | `power` | `W` | None | Load consumed by USB-A Port 2 |
 | **12V Car Port 1 Power** | `dc_12v_port1_w` | `power` | `W` | None | Load consumed by Car Port 1 |
 | **12V Car Port 2 Power** | `dc_12v_port2_w` | `power` | `W` | None | Load consumed by Car Port 2 |
-| **12V Car Port Timer** | `dc_12v_port1_timer` | `duration` | `s` | None | Car port timer |
-| **AC Sockets Timer** | `ac_outlet_timer` | `duration` | `s` | None | AC sockets timer |
+| **12V Car Port Timer Remaining** | `dc_12v_port1_timer` | `duration` | `s` | None | Car port timer |
+| **AC Sockets Timer Remaining** | `ac_outlet_timer` | `duration` | `s` | None | AC sockets timer |
 
 ### Binary Sensor Platform (`binary_sensor`)
 
 | Entity Name | Key | Device Class | Category | Description |
 |---|---|---|---|---|
-| **AC Sockets Power State** | `ac_outlet_on` | `running` | None | `True` when AC sockets are active |
 | **12V Car Port 1 Switch State** | `dc_12v_port1_on` | `running` | None | `True` when Car Port 1 is active |
 | **12V Car Port 2 Switch State** | `dc_12v_port2_on` | `running` | None | `True` when Car Port 2 is active |
 | **USB-C Port 1 Switch State** | `usb_c1_on` | `running` | None | `True` when USB-C Port 1 is active |
@@ -145,14 +144,14 @@ The F2000 BLE integration exposes a wide selection of telemetry sensors:
 | **LED Light Brightness** | `led_state` | OFF, LOW, MID, HIGH, SOS | `mdi:led-on` | LED brightness level |
 | **Screen Brightness** | `screen_brightness` | Low, Mid, High, Max | `mdi:brightness-6` | LCD brightness |
 | **Screen Timeout** | `screen_timeout` | 20s, 30s, 1m, 5m, 30m | `mdi:progress-clock` | LCD screen timeout |
-| **AC Shutdown Timer** | `ac_outlet_timer` | Disabled, 5m-18h | `mdi:timer-outline` | AC timer |
-| **DC Shutdown Timer** | `dc_12v_port1_timer` | Disabled, 5m-18h | `mdi:timer-outline` | DC timer |
+| **AC Sockets Shutdown Timer** | `ac_outlet_timer` | Disabled, 5m-18h | `mdi:timer-outline` | AC timer |
+| **12V Car Port Shutdown Timer** | `dc_12v_port1_timer` | Disabled, 5m-18h | `mdi:timer-outline` | DC timer |
 
 ### Number Platform (`number`)
 
 | Entity Name | Key | Range / Step | Unit | Description |
 |---|---|---|---|---|
-| **AC Recharge Limit** | `ac_recharging_power` | 200-2200 / 100 | W | AC charge limit |
+| **AC Recharging Power Limit** | `ac_recharging_power` | 200-2200 / 100 | W | AC charge limit |
 
 ---
 
