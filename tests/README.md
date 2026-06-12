@@ -131,6 +131,11 @@ tests/venv/bin/python tests/validate_toggle_guard.py
 * **GATT Service Dumper (`diagnose_gatt.py`)**: Discovers and logs physical BLE GATT services,
   descriptors, and properties.
 * **Heartbeat Verification (`test_heartbeat.py`)**: Tests unencrypted query keep-alive ping.
+* **Settings Comparison Helper (`compare_settings.py`)**: Connects to the F2000 to save and compare telemetry binary output frames to identify register indices that change when settings (like Screen Timeout) are adjusted.
+* **Exhaustive Recharging limit protocol discovery script (`discover_recharge_exhaustive.py`)**: Connects to the F2000 and tests multiple command IDs (0x80 to 0x90) and payload formats to find the correct unencrypted write command for setting the AC Recharging Power Limit.
+* **Screen Timeout protocol discovery script (`discover_timeout_protocol.py`)**: Connects to the F2000 and tests candidate command packet formats against real-time telemetry changes to resolve the unencrypted write command for Screen Timeout.
+* **Mock F2000 packet generator and parser (`mock_f2000.py`)**: Simulates the F2000 BLE protocol packet generation and parsing to support offline unit tests.
+* **Display Settings sniffer (`sniff_display_settings.py`)**: Sniffs and parses display settings from BLE characteristics.
 * **Pytest Unit Tests (`test_mock_telemetry.py`)**: Offline verification of correct byte parsing,
   scaling, and coordinator coordination without a physical BLE connection. Asserts correct byte
   scaling, offset calculation, and dynamic coordinator rescheduling logic. Run via:
